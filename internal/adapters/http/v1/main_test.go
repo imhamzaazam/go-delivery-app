@@ -24,6 +24,17 @@ var testUserService *service.UserManager
 func TestMain(m *testing.M) {
 	ctx := context.Background()
 
+	setEnvIfUnset("ENVIRONMENT", "test")
+	setEnvIfUnset("HTTP_SERVER_ADDRESS", "0.0.0.0:8080")
+	setEnvIfUnset("POSTGRES_DB", "go_boilerplate")
+	setEnvIfUnset("POSTGRES_USER", "pguser")
+	setEnvIfUnset("POSTGRES_PASSWORD", "pgpassword")
+	setEnvIfUnset("DB_SOURCE", "postgresql://pguser:pgpassword@localhost:5432/go_boilerplate?sslmode=disable")
+	setEnvIfUnset("MIGRATION_URL", "file://db/postgres/migration")
+	setEnvIfUnset("TOKEN_SYMMETRIC_KEY", "test-super-secret-jwt-key-32-chars")
+	setEnvIfUnset("ACCESS_TOKEN_DURATION", "15m")
+	setEnvIfUnset("REFRESH_TOKEN_DURATION", "24h")
+
 	utils.SetConfigFile("../../../../.env")
 	config := utils.GetConfig()
 
@@ -62,4 +73,14 @@ func TestMain(m *testing.M) {
 	testUserService = service.NewUserManager(testStore)
 
 	os.Exit(m.Run())
+}
+
+func setEnvIfUnset(name string, value string) {
+	if _, exists := os.LookupEnv(name); exists {
+		return
+	}
+
+	if err := os.Setenv(name, value); err != nil {
+		log.Fatalf("cannot set env var %s: %v", name, err)
+	}
 }
