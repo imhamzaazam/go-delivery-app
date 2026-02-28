@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -16,11 +15,7 @@ const (
 	bearerAuth = "bearer"
 )
 
-func Authentication(tokenMaker *token.PasetoMaker) func(next http.Handler) http.Handler {
-	if tokenMaker == nil {
-		fmt.Println("PasetoMaker is not initialized")
-	}
-
+func Authentication(tokenMaker *token.JWTMaker) func(next http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		fn := func(w http.ResponseWriter, r *http.Request) {
 			auth := r.Header.Get("Authorization")
@@ -58,7 +53,6 @@ func Authentication(tokenMaker *token.PasetoMaker) func(next http.Handler) http.
 			}
 
 			accessToken := fields[1]
-			fmt.Println(accessToken)
 			payload, err := tokenMaker.VerifyToken(accessToken)
 			if err != nil {
 				log.Info().Str("id", requestID).Str("error message", err.Error()).Msg("request error")

@@ -42,7 +42,7 @@ type HTTPAdapter struct {
 	router *chi.Mux
 	server *http.Server
 
-	tokenMaker *token.PasetoMaker
+	tokenMaker *token.JWTMaker
 }
 
 func NewHTTPAdapter(userService ports.UserService) (*HTTPAdapter, error) {
@@ -141,7 +141,7 @@ func (adapter *HTTPAdapter) printRoutes(method string, route string, handler htt
 }
 
 func (adapter *HTTPAdapter) setupTokenMaker() error {
-	tokenMaker, err := token.NewPasetoMaker(adapter.config.TokenSymmetricKey)
+	tokenMaker, err := token.NewJWTMaker(adapter.config.TokenSymmetricKey)
 	if err != nil {
 		return err
 	}
