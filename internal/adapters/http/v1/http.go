@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/horiondreher/go-web-api-boilerplate/internal/adapters/http/api"
 	"github.com/horiondreher/go-web-api-boilerplate/internal/adapters/http/httputils"
 	"github.com/horiondreher/go-web-api-boilerplate/internal/adapters/http/middleware"
 	"github.com/horiondreher/go-web-api-boilerplate/internal/adapters/http/token"
@@ -91,23 +92,37 @@ func (adapter *HTTPAdapter) setupRouter() {
 	router.NotFound(notFoundResponse)
 	router.MethodNotAllowed(methodNotAllowedResponse)
 
-	v1Router := chi.NewRouter()
-	v1Router.Use(middleware.RequestID)
-	v1Router.Use(middleware.Logger)
-
-	v1Router.Post("/users", adapter.handlerWrapper(adapter.createUser))
-	v1Router.Post("/login", adapter.handlerWrapper(adapter.loginUser))
-	v1Router.Post("/renew-token", adapter.handlerWrapper(adapter.renewAccessToken))
-
-	// private routes
-	v1Router.Group(func(r chi.Router) {
-		r.Use(middleware.Authentication(adapter.tokenMaker))
-		r.Get("/user/{uid}", adapter.handlerWrapper(adapter.getUserByUID))
+	api.HandlerWithOptions(adapter, api.ChiServerOptions{
+		BaseRouter: router,
+		Middlewares: []api.MiddlewareFunc{
+			middleware.Logger,
+			middleware.RequestID,
+		},
 	})
 
-	router.Mount("/api/v1", v1Router)
-
 	adapter.router = router
+}
+
+func (adapter *HTTPAdapter) PostApiV1Users(w http.ResponseWriter, r *http.Request) {
+	adapter.handlerWrapper(adapter.createUser)(w, r)
+}
+
+func (adapter *HTTPAdapter) PostApiV1Login(w http.ResponseWriter, r *http.Request) {
+	adapter.handlerWrapper(adapter.loginUser)(w, r)
+}
+
+func (adapter *HTTPAdapter) PostApiV1RenewToken(w http.ResponseWriter, r *http.Request) {
+	adapter.handlerWrapper(adapter.renewAccessToken)(w, r)
+}
+
+func (adapter *HTTPAdapter) GetApiV1UserUid(w http.ResponseWriter, r *http.Request, uid string) {
+	handler := middleware.Authentication(adapter.tokenMaker)(
+		adapter.handlerWrapper(func(w http.ResponseWriter, r *http.Request) *domainerr.DomainError {
+			return adapter.getUserByUID(w, r, uid)
+		}),
+	)
+
+	handler.ServeHTTP(w, r)
 }
 
 type HandlerWrapper func(w http.ResponseWriter, r *http.Request) *domainerr.DomainError
@@ -158,4 +173,8 @@ func (adapter *HTTPAdapter) setupServer() {
 	}
 
 	adapter.server = server
+}
+
+func (adapter *HTTPAdapter) Router() *chi.Mux {
+	return adapter.router
 }

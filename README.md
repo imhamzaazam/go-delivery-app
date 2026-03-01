@@ -29,3 +29,9 @@ Set:
 - golang-migrate
 - docker
 - sqlc
+
+## OpenAPI workflow (spec-first)
+
+- Edit `openapi.yaml` as the source of truth.
+- Run `make validate-openapi` to validate the spec.
+- Run `make generate` to generate `internal/adapters/http/v1/openapi.gen.go`.
