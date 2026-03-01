@@ -118,6 +118,8 @@ func (adapter *HTTPAdapter) loginUser(w http.ResponseWriter, r *http.Request) *d
 		return err
 	}
 
+	user.IsStaff
+
 	accessToken, accessPayload, err := adapter.tokenMaker.CreateToken(user.Email, "user", adapter.config.AccessTokenDuration)
 	if err != nil {
 		return err
