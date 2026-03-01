@@ -1,0 +1,181 @@
+components:
+    schemas:
+        CreateUserRequest:
+            type: object
+            required:
+                - full_name
+                - email
+                - password
+            properties:
+                full_name:
+                    type: string
+                email:
+                    type: string
+                    format: email
+                password:
+                    type: string
+        CreateUserResponse:
+            type: object
+            properties:
+                uid:
+                    type: string
+                    format: uuid
+                full_name:
+                    type: string
+                email:
+                    type: string
+                    format: email
+        LoginUserRequest:
+            type: object
+            required:
+                - email
+                - password
+            properties:
+                email:
+                    type: string
+                    format: email
+                password:
+                    type: string
+        LoginUserResponse:
+            type: object
+            properties:
+                email:
+                    type: string
+                    format: email
+                access_token:
+                    type: string
+                refresh_token:
+                    type: string
+                access_token_expires_at:
+                    type: string
+                    format: date-time
+                refresh_token_expires_at:
+                    type: string
+                    format: date-time
+        RenewAccessTokenRequest:
+            type: object
+            required:
+                - refresh_token
+            properties:
+                refresh_token:
+                    type: string
+        RenewAccessTokenResponse:
+            type: object
+            properties:
+                access_token:
+                    type: string
+                access_token_expires_at:
+                    type: string
+                    format: date-time
+        ErrorResponse:
+            type: object
+            properties:
+                code:
+                    type: string
+                errors:
+                    type: string
+    securitySchemes:
+        BearerAuth:
+            bearerFormat: JWT
+            scheme: bearer
+            type: http
+info:
+    description: Auto-generated from registered chi routes
+    title: Go Web API Boilerplate
+    version: 1.0.0
+openapi: 3.0.3
+paths:
+    /api/v1/login:
+        post:
+            operationId: post_api_v1_login
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/LoginUserRequest'
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/LoginUserResponse'
+                default:
+                    description: Error
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+            summary: POST /api/v1/login
+    /api/v1/renew-token:
+        post:
+            operationId: post_api_v1_renew-token
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/RenewAccessTokenRequest'
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/RenewAccessTokenResponse'
+                default:
+                    description: Error
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+            summary: POST /api/v1/renew-token
+    /api/v1/user/{uid}:
+        get:
+            operationId: get_api_v1_user_uid
+            parameters:
+                - in: path
+                  name: uid
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/CreateUserResponse'
+                default:
+                    description: Error
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+            security:
+                - BearerAuth: []
+            summary: GET /api/v1/user/{uid}
+    /api/v1/users:
+        post:
+            operationId: post_api_v1_users
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CreateUserRequest'
+            responses:
+                "201":
+                    description: Created
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/CreateUserResponse'
+                default:
+                    description: Error
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+            summary: POST /api/v1/users

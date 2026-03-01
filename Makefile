@@ -7,6 +7,19 @@ build:
 test:
 	@go test -v ./...
 
+openapi:
+	@echo "Using openapi.yaml"
+
+# Validates openapi.yaml against OpenAPI schema.
+validate-openapi:
+	go run github.com/getkin/kin-openapi/cmd/validate@latest --defaults openapi.yaml
+
+# Generates typed server/spec code from openapi.yaml.
+generate: validate-openapi
+	go run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.4.1 \
+		--package=v1 --generate=types,chi-server,spec,skip-prune \
+		-o internal/adapters/http/v1/openapi.gen.go openapi.yaml
+
 sqlc:
 	sqlc generate
 
@@ -26,4 +39,4 @@ new_migration:
 	migrate create -ext sql -dir db/postgres/migration -seq $(name)
 
 .PHONY:
-	run build test sqlc migrateup migrateup1 migratedown migratedown1 new_migration 
+	run build test openapi validate-openapi generate sqlc migrateup migrateup1 migratedown migratedown1 new_migration

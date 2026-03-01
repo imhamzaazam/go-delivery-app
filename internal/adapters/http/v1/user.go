@@ -6,43 +6,67 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/go-chi/chi/v5"
-	"github.com/google/uuid"
+	"github.com/horiondreher/go-web-api-boilerplate/internal/adapters/http/api"
 	"github.com/horiondreher/go-web-api-boilerplate/internal/adapters/http/httperr"
 	"github.com/horiondreher/go-web-api-boilerplate/internal/adapters/http/httputils"
 	"github.com/horiondreher/go-web-api-boilerplate/internal/adapters/http/middleware"
 	"github.com/horiondreher/go-web-api-boilerplate/internal/adapters/http/token"
 	"github.com/horiondreher/go-web-api-boilerplate/internal/domain/domainerr"
 	"github.com/horiondreher/go-web-api-boilerplate/internal/domain/ports"
+	openapi_types "github.com/oapi-codegen/runtime/types"
 	"github.com/rs/zerolog/log"
 )
 
-type CreateUserRequestDto struct {
-	FullName string `json:"full_name" validate:"required"`
-	Email    string `json:"email" validate:"required,email"`
-	Password string `json:"password" validate:"required"`
+type createUserValidation struct {
+	FullName string `validate:"required"`
+	Email    string `validate:"required,email"`
+	Password string `validate:"required"`
 }
 
-type CreateUserResponseDto struct {
-	UID      uuid.UUID `json:"uid"`
-	FullName string    `json:"full_name"`
-	Email    string    `json:"email"`
+type createUserJSONBody struct {
+	FullName string `json:"full_name"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
+type loginUserValidation struct {
+	Email    string `validate:"required,email"`
+	Password string `validate:"required"`
+}
+
+type loginUserJSONBody struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
+type renewAccessTokenValidation struct {
+	RefreshToken string `validate:"required"`
 }
 
 func (adapter *HTTPAdapter) createUser(w http.ResponseWriter, r *http.Request) *domainerr.DomainError {
-	reqUser, err := httputils.Decode[CreateUserRequestDto](r)
+	requestBody, err := httputils.Decode[createUserJSONBody](r)
 	if err != nil {
 		return err
 	}
 
-	validationErr := validate.Struct(reqUser)
+	reqUser := api.CreateUserRequest{
+		FullName: requestBody.FullName,
+		Email:    openapi_types.Email(requestBody.Email),
+		Password: requestBody.Password,
+	}
+
+	validationErr := validate.Struct(createUserValidation{
+		FullName: requestBody.FullName,
+		Email:    requestBody.Email,
+		Password: requestBody.Password,
+	})
 	if validationErr != nil {
 		return httperr.MatchValidationError(validationErr)
 	}
 
 	createdUser, err := adapter.userService.CreateUser(r.Context(), ports.NewUser{
 		FullName: reqUser.FullName,
-		Email:    reqUser.Email,
+		Email:    string(reqUser.Email),
 		Password: reqUser.Password,
 	})
 	if err != nil {
@@ -51,10 +75,14 @@ func (adapter *HTTPAdapter) createUser(w http.ResponseWriter, r *http.Request) *
 
 	log.Info().Msg("AAAAAAAAAAAA")
 
-	err = httputils.Encode(w, r, http.StatusCreated, CreateUserResponseDto{
-		UID:      createdUser.UID,
-		FullName: createdUser.FullName,
-		Email:    createdUser.Email,
+	responseEmail := openapi_types.Email(createdUser.Email)
+	responseFullName := createdUser.FullName
+	responseUID := openapi_types.UUID(createdUser.UID)
+
+	err = httputils.Encode(w, r, http.StatusCreated, api.CreateUserResponse{
+		Uid:      &responseUID,
+		FullName: &responseFullName,
+		Email:    &responseEmail,
 	})
 	if err != nil {
 		return err
@@ -63,32 +91,27 @@ func (adapter *HTTPAdapter) createUser(w http.ResponseWriter, r *http.Request) *
 	return nil
 }
 
-type LoginUserRequestDto struct {
-	Email    string `json:"email" validate:"required,email"`
-	Password string `json:"password" validate:"required"`
-}
-
-type LoginUserResponseDto struct {
-	Email                 string    `json:"email"`
-	AccessToken           string    `json:"access_token"`
-	RefreshToken          string    `json:"refresh_token"`
-	AccessTokenExpiresAt  time.Time `json:"access_token_expires_at"`
-	RefreshTokenExpiresAt time.Time `json:"refresh_token_expires_at"`
-}
-
 func (adapter *HTTPAdapter) loginUser(w http.ResponseWriter, r *http.Request) *domainerr.DomainError {
-	reqUser, err := httputils.Decode[LoginUserRequestDto](r)
+	requestBody, err := httputils.Decode[loginUserJSONBody](r)
 	if err != nil {
 		return err
 	}
 
-	validationErr := validate.Struct(reqUser)
+	reqUser := api.LoginUserRequest{
+		Email:    openapi_types.Email(requestBody.Email),
+		Password: requestBody.Password,
+	}
+
+	validationErr := validate.Struct(loginUserValidation{
+		Email:    requestBody.Email,
+		Password: requestBody.Password,
+	})
 	if validationErr != nil {
 		return httperr.MatchValidationError(validationErr)
 	}
 
 	user, err := adapter.userService.LoginUser(r.Context(), ports.LoginUser{
-		Email:    reqUser.Email,
+		Email:    string(reqUser.Email),
 		Password: reqUser.Password,
 	})
 	if err != nil {
@@ -105,19 +128,20 @@ func (adapter *HTTPAdapter) loginUser(w http.ResponseWriter, r *http.Request) *d
 		return err
 	}
 
-	loginRes := LoginUserResponseDto{
-		Email:                 user.Email,
-		AccessToken:           accessToken,
-		AccessTokenExpiresAt:  accessPayload.ExpiredAt,
-		RefreshToken:          refreshToken,
-		RefreshTokenExpiresAt: refreshPayload.ExpiredAt,
+	responseEmail := openapi_types.Email(user.Email)
+	loginRes := api.LoginUserResponse{
+		Email:                 &responseEmail,
+		AccessToken:           &accessToken,
+		AccessTokenExpiresAt:  &accessPayload.ExpiredAt,
+		RefreshToken:          &refreshToken,
+		RefreshTokenExpiresAt: &refreshPayload.ExpiredAt,
 	}
 
 	_, err = adapter.userService.CreateUserSession(r.Context(), ports.NewUserSession{
 		RefreshTokenID:        refreshPayload.ID,
-		Email:                 loginRes.Email,
-		RefreshToken:          loginRes.RefreshToken,
-		RefreshTokenExpiresAt: loginRes.RefreshTokenExpiresAt,
+		Email:                 user.Email,
+		RefreshToken:          refreshToken,
+		RefreshTokenExpiresAt: refreshPayload.ExpiredAt,
 		UserAgent:             r.UserAgent(),
 		ClientIP:              r.RemoteAddr,
 	})
@@ -133,22 +157,15 @@ func (adapter *HTTPAdapter) loginUser(w http.ResponseWriter, r *http.Request) *d
 	return nil
 }
 
-type RenewAccessTokenRequestDto struct {
-	RefreshToken string `json:"refresh_token" validate:"required"`
-}
-
-type RenewAccessTokenResponseDto struct {
-	AccessToken          string    `json:"access_token"`
-	AccessTokenExpiresAt time.Time `json:"access_token_expires_at"`
-}
-
 func (adapter *HTTPAdapter) renewAccessToken(w http.ResponseWriter, r *http.Request) *domainerr.DomainError {
-	renewAccessDto, err := httputils.Decode[RenewAccessTokenRequestDto](r)
+	renewAccessDto, err := httputils.Decode[api.RenewAccessTokenRequest](r)
 	if err != nil {
 		return err
 	}
 
-	validationErr := validate.Struct(renewAccessDto)
+	validationErr := validate.Struct(renewAccessTokenValidation{
+		RefreshToken: renewAccessDto.RefreshToken,
+	})
 	if validationErr != nil {
 		return httperr.MatchValidationError(validationErr)
 	}
@@ -184,9 +201,9 @@ func (adapter *HTTPAdapter) renewAccessToken(w http.ResponseWriter, r *http.Requ
 		return err
 	}
 
-	renewAccessTokenResponse := RenewAccessTokenResponseDto{
-		AccessToken:          accessToken,
-		AccessTokenExpiresAt: accessPayload.ExpiredAt,
+	renewAccessTokenResponse := api.RenewAccessTokenResponse{
+		AccessToken:          &accessToken,
+		AccessTokenExpiresAt: &accessPayload.ExpiredAt,
 	}
 
 	err = httputils.Encode(w, r, http.StatusOK, renewAccessTokenResponse)
@@ -197,24 +214,26 @@ func (adapter *HTTPAdapter) renewAccessToken(w http.ResponseWriter, r *http.Requ
 	return nil
 }
 
-func (adapter *HTTPAdapter) getUserByUID(w http.ResponseWriter, r *http.Request) *domainerr.DomainError {
+func (adapter *HTTPAdapter) getUserByUID(w http.ResponseWriter, r *http.Request, uid string) *domainerr.DomainError {
 	payload := r.Context().Value(middleware.KeyAuthUser).(*token.Payload)
 	requestID := middleware.GetRequestID(r.Context())
 
 	fmt.Println(payload)
 	fmt.Println(requestID)
 
-	userID := chi.URLParam(r, "uid")
-
-	user, serviceErr := adapter.userService.GetUserByUID(r.Context(), userID)
+	user, serviceErr := adapter.userService.GetUserByUID(r.Context(), uid)
 	if serviceErr != nil {
 		return serviceErr
 	}
 
-	err := httputils.Encode(w, r, http.StatusOK, CreateUserResponseDto{
-		UID:      user.UID,
-		Email:    user.Email,
-		FullName: user.FullName,
+	responseEmail := openapi_types.Email(user.Email)
+	responseFullName := user.FullName
+	responseUID := openapi_types.UUID(user.UID)
+
+	err := httputils.Encode(w, r, http.StatusOK, api.CreateUserResponse{
+		Uid:      &responseUID,
+		Email:    &responseEmail,
+		FullName: &responseFullName,
 	})
 	if err != nil {
 		return err

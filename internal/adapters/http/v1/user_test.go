@@ -109,15 +109,19 @@ func TestCreateUserV1(t *testing.T) {
 }
 
 func validateUserResponse(t *testing.T, response testUser, body *bytes.Buffer) {
-	var responseUser CreateUserResponseDto
+	var responseUser CreateUserResponse
 	err := json.NewDecoder(body).Decode(&responseUser)
 	require.NoError(t, err)
 
-	require.Equal(t, response.full_name, responseUser.FullName)
-	require.Equal(t, response.email, responseUser.Email)
+	require.NotNil(t, responseUser.FullName)
+	require.NotNil(t, responseUser.Email)
+	require.NotNil(t, responseUser.Uid)
 
-	require.NotZero(t, responseUser.UID)
-	require.IsType(t, uuid.UUID{}, responseUser.UID)
+	require.Equal(t, response.full_name, *responseUser.FullName)
+	require.Equal(t, response.email, string(*responseUser.Email))
+
+	require.NotZero(t, *responseUser.Uid)
+	require.IsType(t, uuid.UUID{}, uuid.UUID(*responseUser.Uid))
 }
 
 func TestLoginUser(t *testing.T) {
