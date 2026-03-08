@@ -16,25 +16,27 @@ var (
 )
 
 type Payload struct {
-	ID        uuid.UUID `json:"id"`
-	Email     string    `json:"email"`
-	Role      string    `json:"role"`
-	IssuedAt  time.Time `json:"issued_at"`
-	ExpiredAt time.Time `json:"expired_at"`
+	ID         uuid.UUID `json:"id"`
+	Email      string    `json:"email"`
+	Role       string    `json:"role"`
+	MerchantID uuid.UUID `json:"merchant_id"`
+	IssuedAt   time.Time `json:"issued_at"`
+	ExpiredAt  time.Time `json:"expired_at"`
 }
 
-func NewPayload(email string, role string, duration time.Duration) (*Payload, *domainerr.DomainError) {
+func NewPayload(email string, role string, merchantID uuid.UUID, duration time.Duration) (*Payload, *domainerr.DomainError) {
 	tokenID, err := uuid.NewRandom()
 	if err != nil {
 		return nil, domainerr.NewDomainError(http.StatusInternalServerError, domainerr.UnexpectedError, err.Error(), err)
 	}
 
 	payload := &Payload{
-		ID:        tokenID,
-		Email:     email,
-		Role:      role,
-		IssuedAt:  time.Now(),
-		ExpiredAt: time.Now().Add(duration),
+		ID:         tokenID,
+		Email:      email,
+		Role:       role,
+		MerchantID: merchantID,
+		IssuedAt:   time.Now(),
+		ExpiredAt:  time.Now().Add(duration),
 	}
 
 	return payload, nil

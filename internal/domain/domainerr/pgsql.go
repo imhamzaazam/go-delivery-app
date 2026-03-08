@@ -53,6 +53,10 @@ func MapDuplicateError(constraintName string) string {
 
 	switch constraintName {
 	case "user_email_idx":
+		fallthrough
+	case "actors_email_key":
+		fallthrough
+	case "actors_merchant_id_email_key":
 		errorMessage = "The email is already in use"
 	}
 

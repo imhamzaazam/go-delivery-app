@@ -69,3 +69,11 @@ func Authentication(tokenMaker *token.JWTMaker) func(next http.Handler) http.Han
 		return http.HandlerFunc(fn)
 	}
 }
+
+func GetAuthUser(httpCtx context.Context) (payload *token.Payload) {
+	if authPayload, ok := httpCtx.Value(KeyAuthUser).(*token.Payload); ok {
+		payload = authPayload
+	}
+
+	return
+}

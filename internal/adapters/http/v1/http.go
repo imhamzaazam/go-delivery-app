@@ -8,7 +8,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/horiondreher/go-web-api-boilerplate/internal/adapters/http/api"
 	"github.com/horiondreher/go-web-api-boilerplate/internal/adapters/http/httputils"
 	"github.com/horiondreher/go-web-api-boilerplate/internal/adapters/http/middleware"
 	"github.com/horiondreher/go-web-api-boilerplate/internal/adapters/http/token"
@@ -37,7 +36,10 @@ func setupValidator() {
 }
 
 type HTTPAdapter struct {
-	userService ports.UserService
+	actorService    ports.ActorService
+	commerceService ports.CommerceService
+	merchantService ports.MerchantService
+	readService     ports.ReadService
 
 	config *utils.Config
 	router *chi.Mux
@@ -46,10 +48,20 @@ type HTTPAdapter struct {
 	tokenMaker *token.JWTMaker
 }
 
-func NewHTTPAdapter(userService ports.UserService) (*HTTPAdapter, error) {
+type AdapterDependencies struct {
+	ActorService    ports.ActorService
+	CommerceService ports.CommerceService
+	MerchantService ports.MerchantService
+	ReadService     ports.ReadService
+}
+
+func NewHTTPAdapter(deps AdapterDependencies) (*HTTPAdapter, error) {
 	httpAdapter := &HTTPAdapter{
-		userService: userService,
-		config:      utils.GetConfig(),
+		actorService:    deps.ActorService,
+		commerceService: deps.CommerceService,
+		merchantService: deps.MerchantService,
+		readService:     deps.ReadService,
+		config:          utils.GetConfig(),
 	}
 
 	setupValidator()
@@ -92,37 +104,12 @@ func (adapter *HTTPAdapter) setupRouter() {
 	router.NotFound(notFoundResponse)
 	router.MethodNotAllowed(methodNotAllowedResponse)
 
-	api.HandlerWithOptions(adapter, api.ChiServerOptions{
-		BaseRouter: router,
-		Middlewares: []api.MiddlewareFunc{
-			middleware.Logger,
-			middleware.RequestID,
-		},
-	})
+	router.Use(middleware.RequestID)
+	router.Use(middleware.Logger)
+
+	HandlerFromMux(adapter, router)
 
 	adapter.router = router
-}
-
-func (adapter *HTTPAdapter) PostApiV1Users(w http.ResponseWriter, r *http.Request) {
-	adapter.handlerWrapper(adapter.createUser)(w, r)
-}
-
-func (adapter *HTTPAdapter) PostApiV1Login(w http.ResponseWriter, r *http.Request) {
-	adapter.handlerWrapper(adapter.loginUser)(w, r)
-}
-
-func (adapter *HTTPAdapter) PostApiV1RenewToken(w http.ResponseWriter, r *http.Request) {
-	adapter.handlerWrapper(adapter.renewAccessToken)(w, r)
-}
-
-func (adapter *HTTPAdapter) GetApiV1UserUid(w http.ResponseWriter, r *http.Request, uid string) {
-	handler := middleware.Authentication(adapter.tokenMaker)(
-		adapter.handlerWrapper(func(w http.ResponseWriter, r *http.Request) *domainerr.DomainError {
-			return adapter.getUserByUID(w, r, uid)
-		}),
-	)
-
-	handler.ServeHTTP(w, r)
 }
 
 type HandlerWrapper func(w http.ResponseWriter, r *http.Request) *domainerr.DomainError

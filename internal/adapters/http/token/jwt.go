@@ -12,8 +12,9 @@ import (
 )
 
 type jwtClaims struct {
-	Email string `json:"email"`
-	Role  string `json:"role"`
+	Email      string `json:"email"`
+	Role       string `json:"role"`
+	MerchantID string `json:"merchant_id"`
 	jwt.RegisteredClaims
 }
 
@@ -33,15 +34,16 @@ func NewJWTMaker(secretKey string) (*JWTMaker, error) {
 	}, nil
 }
 
-func (maker *JWTMaker) CreateToken(email string, role string, duration time.Duration) (string, *Payload, *domainerr.DomainError) {
-	payload, payloadErr := NewPayload(email, role, duration)
+func (maker *JWTMaker) CreateToken(email string, role string, merchantID uuid.UUID, duration time.Duration) (string, *Payload, *domainerr.DomainError) {
+	payload, payloadErr := NewPayload(email, role, merchantID, duration)
 	if payloadErr != nil {
 		return "", payload, payloadErr
 	}
 
 	claims := jwtClaims{
-		Email: email,
-		Role:  role,
+		Email:      email,
+		Role:       role,
+		MerchantID: merchantID.String(),
 		RegisteredClaims: jwt.RegisteredClaims{
 			ID:        payload.ID.String(),
 			IssuedAt:  jwt.NewNumericDate(payload.IssuedAt),
@@ -88,12 +90,18 @@ func (maker *JWTMaker) VerifyToken(token string) (*Payload, *domainerr.DomainErr
 		return nil, domainerr.NewDomainError(http.StatusUnauthorized, domainerr.UnauthorizedError, "invalid token", ErrInvalidToken)
 	}
 
+	merchantID, merchantParseErr := uuid.Parse(claims.MerchantID)
+	if merchantParseErr != nil {
+		return nil, domainerr.NewDomainError(http.StatusUnauthorized, domainerr.UnauthorizedError, "invalid token", ErrInvalidToken)
+	}
+
 	payload := &Payload{
-		ID:        tokenID,
-		Email:     claims.Email,
-		Role:      claims.Role,
-		IssuedAt:  claims.IssuedAt.Time,
-		ExpiredAt: claims.ExpiresAt.Time,
+		ID:         tokenID,
+		Email:      claims.Email,
+		Role:       claims.Role,
+		MerchantID: merchantID,
+		IssuedAt:   claims.IssuedAt.Time,
+		ExpiredAt:  claims.ExpiresAt.Time,
 	}
 
 	if validationErr := payload.Valid(); validationErr != nil {

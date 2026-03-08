@@ -1,5 +1,20 @@
-run:
+ifeq ($(OS),Windows_NT)
+STOP_APP_CMD=powershell -NoProfile -Command "$$ErrorActionPreference = 'SilentlyContinue'; $$procs = Get-CimInstance Win32_Process | Where-Object { $$_.Name -eq 'go.exe' -and $$_.CommandLine -like '*cmd/http/main.go*' }; foreach ($$proc in $$procs) { taskkill /PID $$proc.ProcessId /T /F | Out-Null }; $$listeners = Get-NetTCPConnection -LocalPort 8080 -State Listen | Select-Object -ExpandProperty OwningProcess -Unique; foreach ($$pid in $$listeners) { taskkill /PID $$pid /T /F | Out-Null }; exit 0"
+else
+STOP_APP_CMD=pkill -f "go run cmd/http/main.go" || true; fuser -k 8080/tcp >/dev/null 2>&1 || true
+endif
+
+run: stop-app run-services
 	go run cmd/http/main.go
+
+stop-app:
+	@$(STOP_APP_CMD)
+
+run-services:
+	docker compose up -d --wait postgres
+
+stop-services:
+	docker compose stop postgres
 
 build:
 	@go build -o bin/go-boilerplate cmd/http/main.go
@@ -23,6 +38,8 @@ generate: validate-openapi
 sqlc:
 	sqlc generate
 
+DB_SOURCE ?= postgresql://pguser:pgpassword@localhost:5432/go_boilerplate?sslmode=disable
+
 migrateup:
 	migrate -path db/postgres/migration -database "$(DB_SOURCE)" -verbose up
 
@@ -39,4 +56,4 @@ new_migration:
 	migrate create -ext sql -dir db/postgres/migration -seq $(name)
 
 .PHONY:
-	run build test openapi validate-openapi generate sqlc migrateup migrateup1 migratedown migratedown1 new_migration
+	run stop-app run-services stop-services build test openapi validate-openapi generate sqlc migrateup migrateup1 migratedown migratedown1 new_migration

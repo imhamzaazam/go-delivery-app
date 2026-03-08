@@ -18,7 +18,7 @@ JSON_CONTENT_TYPE="Content-Type: application/json"
 
 # JSON files
 LOGIN_JSON_FILE="json/login.json"
-USER_JSON_FILE="json/create_user.json"
+ACTOR_JSON_FILE="json/create_actor.json"
 
 # Token file
 TOKEN_FILE="temp/tokens.json"
@@ -54,15 +54,15 @@ login)
   response=$(send_post_request "$BASE_URL/login" "$LOGIN_JSON_FILE")
   save_tokens "$response"
   ;;
-create_user)
-  response=$(send_post_request "$BASE_URL/users" "$USER_JSON_FILE")
+create_actor)
+  response=$(send_post_request "$BASE_URL/actors" "$ACTOR_JSON_FILE")
   ;;
 renew_token)
   response=$(send_post_request "$BASE_URL/renew-token" "$TOKEN_FILE" '{refresh_token: .refresh_token}')
   save_tokens "$response"
   ;;
-get_user)
-  response=$(send_get_request "$BASE_URL/user/eb01f6d3-b964-4bdc-be66-a40c95378480")
+get_actor)
+  response=$(send_get_request "$BASE_URL/actor/eb01f6d3-b964-4bdc-be66-a40c95378480")
   ;;
 *)
   echo "Invalid action: $ACTION"

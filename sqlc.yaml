@@ -25,3 +25,9 @@ sql:
           - db_type: "uuid"
             go_type: "github.com/google/uuid.UUID"
             nullable: true
+          - column: "sessions.actor_id"
+            go_type: "github.com/jackc/pgx/v5/pgtype.UUID"
+          - column: "carts.actor_id"
+            go_type: "github.com/jackc/pgx/v5/pgtype.UUID"
+          - column: "orders.actor_id"
+            go_type: "github.com/jackc/pgx/v5/pgtype.UUID"

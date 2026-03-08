@@ -8,6 +8,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/horiondreher/go-web-api-boilerplate/internal/adapters/pgsqlc"
 	service "github.com/horiondreher/go-web-api-boilerplate/internal/domain/services"
 	"github.com/horiondreher/go-web-api-boilerplate/internal/utils"
@@ -19,7 +20,11 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-var testUserService *service.UserManager
+var testActorService *service.ActorManager
+var testMerchantService *service.MerchantManager
+var testReadService *service.CommerceManager
+var testStore *pgsqlc.Queries
+var testMerchantID uuid.UUID
 
 func TestMain(m *testing.M) {
 	ctx := context.Background()
@@ -45,7 +50,7 @@ func TestMain(m *testing.M) {
 	}
 
 	pgContainer, err := postgres.RunContainer(ctx,
-		testcontainers.WithImage("postgres:16.2"),
+		testcontainers.WithImage("postgis/postgis:16-3.4"),
 		postgres.WithInitScripts(upMigrations...),
 		postgres.WithDatabase(config.DBName),
 		postgres.WithUsername(config.DBUser),
@@ -68,9 +73,38 @@ func TestMain(m *testing.M) {
 	if err != nil {
 		log.Fatalf("cannot connect to database: %v", err)
 	}
+	defer conn.Close()
 
-	testStore := pgsqlc.New(conn)
-	testUserService = service.NewUserManager(testStore)
+	testStore = pgsqlc.New(conn)
+
+	merchant, err := testStore.CreateMerchant(ctx, pgsqlc.CreateMerchantParams{
+		Name:          "Test Merchant",
+		Ntn:           "TEST-NTN-0001",
+		Address:       "Test Address",
+		Category:      pgsqlc.MerchantCategoryRestaurant,
+		ContactNumber: "12345678901234",
+	})
+	if err != nil {
+		log.Fatalf("cannot seed merchant: %v", err)
+	}
+
+	if merchant.ID.String() == "" {
+		log.Fatalf("seeded merchant has empty id")
+	}
+
+	if merchant.Name != "Test Merchant" {
+		log.Fatalf("seeded merchant has unexpected name: %s", merchant.Name)
+	}
+
+	if merchant.Ntn != "TEST-NTN-0001" {
+		log.Fatalf("seeded merchant has unexpected ntn: %s", merchant.Ntn)
+	}
+
+	testMerchantID = merchant.ID
+
+	testActorService = service.NewActorManager(testStore)
+	testMerchantService = service.NewMerchantManager(conn, testStore)
+	testReadService = service.NewCommerceManager(conn, testStore)
 
 	os.Exit(m.Run())
 }
