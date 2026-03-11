@@ -1,0 +1,137 @@
+# Cursor Rules for Go DDD Architecture (Updated)
+
+# Overview
+This repository follows DDD + Hexagonal Architecture.
+- For new code, follow these rules strictly.
+- For existing code, preserve behavior and move incrementally.
+
+# Architecture Layers
+Layers:
+- domain: pure business logic
+- application: use cases, orchestration
+- adapters: HTTP, DB, Redis, Kafka
+- platform: logger, config, clock
+- cmd: server entry point
+
+Dependency direction:
+HTTP -> Application -> Domain
+DB/Redis/Kafka -> Domain interfaces
+Domain must never depend on any external layer.
+
+# Folder Structure (Flattened, Feature-Based)
+Use a vertical slice per feature:
+
+<feature>/
+  store/
+    write/           # Optional: commands (POST/PUT/DELETE)
+      dto.go         # Write request/response structs
+      postgres.go    # Write repository
+    read/            # Optional: queries (GET)
+      dto.go         # Read request/response structs
+      postgres.go    # Read repository (optimized queries)
+  const.go           # Feature-level constants
+  http.go            # HTTP routes / handlers
+  model.go           # Domain entities & value objects
+  service.go         # Application use cases
+
+Notes:
+- store/ contains DB and DTOs only.
+- Optional read/write separation allows CQRS-style organization.
+- HTTP DTOs live in store/dto.go (or store/read/dto.go & store/write/dto.go)
+- Domain logic stays in model.go
+- Application logic stays in service.go
+- Handlers in http.go are thin: parse -> call service -> respond
+
+# Domain Layer Rules
+Contains:
+- Entities
+- Value objects
+- Domain services
+- Repository interfaces
+
+Must NOT import:
+net/http, database/sql, pgx, redis, gin, echo, grpc, or any framework
+
+Example:
+type CartRepository interface {
+  Save(ctx context.Context, cart *Cart) error
+  GetByID(ctx context.Context, id string) (*Cart, error)
+}
+
+# Application Layer Rules
+- Implements use cases.
+- Each use case is a struct with dependencies.
+
+Example:
+type CreateCart struct {
+  repo domain.CartRepository
+}
+
+func (uc *CreateCart) Execute(ctx context.Context, merchantID string) (*domain.Cart, error)
+
+Imports allowed: domain, context
+Must NOT import: http, postgres, redis, frameworks
+
+# HTTP Adapter Rules
+- Handlers live in the feature package (http.go)
+- Handlers must only:
+  - Parse request
+  - Call application use case
+  - Return response
+- Must not contain business logic
+
+Optional read/write separation:
+store/
+  read/dto.go         # GET requests/responses
+  read/postgres.go    # Query repository
+  write/dto.go        # POST/PUT requests/responses
+  write/postgres.go   # Command repository
+
+Example:
+func LoginHandler(w http.ResponseWriter, r *http.Request) {
+  var req store.WriteLoginRequest
+  json.NewDecoder(r.Body).Decode(&req)
+  user, _ := service.LoginUser(req.Email, req.Password)
+  json.NewEncoder(w).Encode(store.WriteLoginResponse{UserID: user.ID})
+}
+
+# Database Adapter Rules
+- Implements domain repository interfaces
+- Can import: domain, pgx, sqlc
+- Must never contain business logic
+
+# Platform Layer Rules
+- Cross-cutting: logger, config, clock, tracing
+- Must not contain business logic
+
+# Testing Rules
+- Unit Tests:
+  - Domain: test business rules
+  - Application: mock repositories
+  - HTTP: test parsing, validation, response
+- Integration Tests:
+  - Live in adapters
+  - Use testcontainers if database required
+  - Flow tests (e.g., payload_flow_test.go) exercise read/write interactions
+- E2E / Smoke Tests:
+  - Critical paths: login -> cart -> order -> report
+  - Use http_e2e_flow_test.go and read_smoke_test.go
+
+# Naming Rules
+- Use clear names: create_cart.go, get_cart.go, cart_handler.go, cart_repository.go
+- Avoid generic names: service.go, manager.go, utils.go
+
+# Vertical Slice Rule
+- All code for a feature lives together
+
+Example cart feature:
+cart/
+  store/           # DB + DTOs
+  const.go
+  http.go
+  model.go
+  service.go
+
+# Documentation Rules
+- Keep docs in sync with api/openapi.yaml and code
+- Only document implemented or planned endpoints; mark drafts clearly

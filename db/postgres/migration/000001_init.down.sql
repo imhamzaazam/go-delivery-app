@@ -1,8 +1,7 @@
 BEGIN;
 
--- ======================
--- DROP TABLES (reverse dependency order)
--- ======================
+DROP INDEX IF EXISTS idx_merchant_discounts_category_id;
+DROP INDEX IF EXISTS idx_merchant_discounts_product_id;
 DROP INDEX IF EXISTS idx_inventory_product_branch;
 DROP INDEX IF EXISTS idx_zones_geom;
 DROP INDEX IF EXISTS idx_products_merchant_id;

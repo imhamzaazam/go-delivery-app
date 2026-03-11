@@ -163,7 +163,7 @@ Write clear testable outcomes.
 
 ## 10) Rollout Notes (Optional)
 - Feature flag needed: `no`
-- Migration order: existing migration baseline + regenerate (`make sqlc`, `make generate`) for query/spec changes.
+- Migration order: update the single migration baseline as needed, then regenerate (`make sqlc`, `make generate -C api`) for query/spec changes.
 - Manual verification steps:
   1. Start postgres via `make run-services` (or run tests with Testcontainers).
   2. Create merchant via `POST /api/v1/merchants`.

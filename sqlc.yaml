@@ -1,12 +1,12 @@
 version: "2"
 sql:
   - schema: "db/postgres/migration"
-    queries: "db/postgres/query"
+    queries: "db/postgres/query/actor"
     engine: "postgresql"
     gen:
       go:
-        package: "pgsqlc"
-        out: "internal/adapters/pgsqlc"
+        package: "actorstore"
+        out: "internal/actor/store/generated"
         sql_package: "pgx/v5"
         emit_json_tags: false
         emit_interface: true
@@ -14,7 +14,7 @@ sql:
         rename:
           uid: "UID"
           client_ip: "ClientIP"
-        overrides:
+        overrides: &go_overrides
           - db_type: "timestamptz"
             go_type: "time.Time"
           - db_type: "timestamptz"
@@ -31,3 +31,115 @@ sql:
             go_type: "github.com/jackc/pgx/v5/pgtype.UUID"
           - column: "orders.actor_id"
             go_type: "github.com/jackc/pgx/v5/pgtype.UUID"
+
+  - schema: "db/postgres/migration"
+    queries: "db/postgres/query/auth"
+    engine: "postgresql"
+    gen:
+      go:
+        package: "authstore"
+        out: "internal/auth/store/generated"
+        sql_package: "pgx/v5"
+        emit_json_tags: false
+        emit_interface: true
+        emit_empty_slices: true
+        rename:
+          uid: "UID"
+          client_ip: "ClientIP"
+        overrides: *go_overrides
+
+  - schema: "db/postgres/migration"
+    queries: "db/postgres/query/cart"
+    engine: "postgresql"
+    gen:
+      go:
+        package: "cartstore"
+        out: "internal/cart/store/generated"
+        sql_package: "pgx/v5"
+        emit_json_tags: false
+        emit_interface: true
+        emit_empty_slices: true
+        rename:
+          uid: "UID"
+          client_ip: "ClientIP"
+        overrides: *go_overrides
+
+  - schema: "db/postgres/migration"
+    queries: "db/postgres/query/catalog"
+    engine: "postgresql"
+    gen:
+      go:
+        package: "catalogstore"
+        out: "internal/catalog/store/generated"
+        sql_package: "pgx/v5"
+        emit_json_tags: false
+        emit_interface: true
+        emit_empty_slices: true
+        rename:
+          uid: "UID"
+          client_ip: "ClientIP"
+        overrides: *go_overrides
+
+  - schema: "db/postgres/migration"
+    queries: "db/postgres/query/coverage"
+    engine: "postgresql"
+    gen:
+      go:
+        package: "coveragestore"
+        out: "internal/coverage/store/generated"
+        sql_package: "pgx/v5"
+        emit_json_tags: false
+        emit_interface: true
+        emit_empty_slices: true
+        rename:
+          uid: "UID"
+          client_ip: "ClientIP"
+        overrides: *go_overrides
+
+  - schema: "db/postgres/migration"
+    queries: "db/postgres/query/merchant"
+    engine: "postgresql"
+    gen:
+      go:
+        package: "merchantstore"
+        out: "internal/merchant/store/generated"
+        sql_package: "pgx/v5"
+        emit_json_tags: false
+        emit_interface: true
+        emit_empty_slices: true
+        rename:
+          uid: "UID"
+          client_ip: "ClientIP"
+        overrides: *go_overrides
+
+  - schema: "db/postgres/migration"
+    queries: "db/postgres/query/order"
+    engine: "postgresql"
+    gen:
+      go:
+        package: "orderstore"
+        out: "internal/order/store/generated"
+        sql_package: "pgx/v5"
+        emit_json_tags: false
+        emit_interface: true
+        emit_empty_slices: true
+        rename:
+          uid: "UID"
+          client_ip: "ClientIP"
+        overrides: *go_overrides
+
+  - schema: "db/postgres/migration"
+    queries: "db/postgres/query/report"
+    engine: "postgresql"
+    gen:
+      go:
+        package: "reportstore"
+        out: "internal/report/store/generated"
+        sql_package: "pgx/v5"
+        emit_json_tags: false
+        emit_interface: true
+        emit_empty_slices: true
+        rename:
+          uid: "UID"
+          client_ip: "ClientIP"
+        overrides: *go_overrides
