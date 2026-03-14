@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/horiondreher/go-web-api-boilerplate/internal/actor/store/generated"
+	actorstore "github.com/horiondreher/go-web-api-boilerplate/internal/actor/store/generated"
 	openapi_types "github.com/oapi-codegen/runtime/types"
 
 	api "github.com/horiondreher/go-web-api-boilerplate/api"
@@ -87,7 +87,7 @@ func (handler *Handler) createActor(w http.ResponseWriter, r *http.Request) *dom
 	var createdActor actorstore.CreateActorRow
 	var createErr *domainerr.DomainError
 	if requestBody.Role != nil {
-		createdActor, createErr = handler.shared.CommerceService.CreateActorByMerchant(r.Context(), authUser.MerchantID, authUser.Email, authUser.MerchantID.String(), newActor, role)
+		createdActor, createErr = handler.shared.MerchantService.CreateActorByMerchant(r.Context(), authUser.MerchantID, authUser.Email, authUser.MerchantID.String(), newActor, role)
 	} else {
 		createdActor, createErr = handler.shared.ActorService.CreateActor(r.Context(), newActor)
 	}

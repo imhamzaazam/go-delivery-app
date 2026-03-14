@@ -3,6 +3,7 @@ package app
 import (
 	"github.com/google/uuid"
 	commercestore "github.com/horiondreher/go-web-api-boilerplate/internal/commerce/store"
+	reportdomain "github.com/horiondreher/go-web-api-boilerplate/internal/report"
 
 	pkgdb "github.com/horiondreher/go-web-api-boilerplate/pkg/db"
 )
@@ -16,14 +17,7 @@ func NewService(db *pkgdb.DB, store *commercestore.Postgres) *Service {
 	return &Service{db: db, store: store}
 }
 
-type SalesReport struct {
-	Month          int
-	Year           int
-	TotalSales     float64
-	TotalTax       float64
-	TotalDiscount  float64
-	ProfitEstimate float64
-}
+type SalesReport = reportdomain.SalesReport
 
 type InventoryItem struct {
 	ProductID   uuid.UUID

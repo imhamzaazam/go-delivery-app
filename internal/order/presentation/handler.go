@@ -132,7 +132,7 @@ func (handler *Handler) PlaceOrderFromCart(w http.ResponseWriter, r *http.Reques
 			return httperr.MatchValidationError(validationErr)
 		}
 
-		orderBill, createErr := handler.shared.CommerceService.PlaceOrderFromCartHTTP(r.Context(), requestBody.CartId.String(), string(requestBody.PaymentType), requestBody.DeliveryAddress, requestBody.CustomerName, requestBody.CustomerPhone)
+		orderBill, createErr := handler.shared.OrderService.PlaceOrderFromCartHTTP(r.Context(), requestBody.CartId.String(), string(requestBody.PaymentType), requestBody.DeliveryAddress, requestBody.CustomerName, requestBody.CustomerPhone)
 		if createErr != nil {
 			return createErr
 		}
@@ -143,7 +143,7 @@ func (handler *Handler) PlaceOrderFromCart(w http.ResponseWriter, r *http.Reques
 
 func (handler *Handler) GetOrderDetail(w http.ResponseWriter, r *http.Request, orderID string) {
 	handler.shared.Wrap(func(w http.ResponseWriter, r *http.Request) *domainerr.DomainError {
-		order, err := handler.shared.ReadService.GetPublicOrderDetail(r.Context(), orderID)
+		order, err := handler.shared.OrderService.GetPublicOrderDetail(r.Context(), orderID)
 		if err != nil {
 			return err
 		}
@@ -261,7 +261,7 @@ func (handler *Handler) UpdateOrderStatus(w http.ResponseWriter, r *http.Request
 			return authErr
 		}
 
-		order, updateErr := handler.shared.CommerceService.UpdateOrderStatusHTTP(r.Context(), authUser.MerchantID, authUser.Email, authUser.MerchantID.String(), orderID, string(requestBody.Status))
+		order, updateErr := handler.shared.OrderService.UpdateOrderStatusHTTP(r.Context(), authUser.MerchantID, authUser.Email, authUser.MerchantID.String(), orderID, string(requestBody.Status))
 		if updateErr != nil {
 			return updateErr
 		}
@@ -277,7 +277,7 @@ func (handler *Handler) ListOrdersByMerchant(w http.ResponseWriter, r *http.Requ
 			return authErr
 		}
 
-		orders, err := handler.shared.ReadService.ListOrdersByMerchant(r.Context(), authUser.MerchantID, authUser.Email, authUser.MerchantID.String())
+		orders, err := handler.shared.OrderService.ListOrdersByMerchant(r.Context(), authUser.MerchantID, authUser.Email, authUser.MerchantID.String())
 		if err != nil {
 			return err
 		}

@@ -424,9 +424,13 @@ components:
                 cart_id:
                     format: uuid
                     type: string
+                merchant_id:
+                    format: uuid
+                    type: string
             required:
                 - branch_id
                 - cart_id
+                - merchant_id
             type: object
         CreateCartResponse:
             properties:
@@ -1566,6 +1570,7 @@ paths:
                             schema:
                                 $ref: '#/components/schemas/ErrorResponse'
                     description: Error
+            security: []
     /api/v1/carts/{cart_id}:
         get:
             operationId: GetCartDetail

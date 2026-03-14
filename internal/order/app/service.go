@@ -3,11 +3,11 @@ package app
 import (
 	"context"
 
-	"github.com/google/uuid"
 	commercestore "github.com/horiondreher/go-web-api-boilerplate/internal/commerce/store"
 	"github.com/jackc/pgx/v5"
 
 	"github.com/horiondreher/go-web-api-boilerplate/internal/core/domainerr"
+	orderdomain "github.com/horiondreher/go-web-api-boilerplate/internal/order"
 	pkgdb "github.com/horiondreher/go-web-api-boilerplate/pkg/db"
 )
 
@@ -20,31 +20,9 @@ func NewService(db *pkgdb.DB, store *commercestore.Postgres) *Service {
 	return &Service{db: db, store: store}
 }
 
-type OrderLineBill struct {
-	ProductID      uuid.UUID
-	ProductName    string
-	BasePrice      float64
-	PaymentMethod  string
-	Quantity       int32
-	BaseAmount     float64
-	AddonAmount    float64
-	DiscountAmount float64
-	FinalPrice     float64
-	TaxAmount      float64
-	Vat            float64
-	LineTotal      float64
-	TotalPrice     float64
-}
+type OrderLineBill = orderdomain.LineBill
 
-type OrderBill struct {
-	OrderID     uuid.UUID
-	PaymentType string
-	VatRate     float64
-	Subtotal    float64
-	TotalTax    float64
-	Total       float64
-	LineItems   []OrderLineBill
-}
+type OrderBill = orderdomain.Bill
 
 func (service *Service) runInTx(ctx context.Context, fn func(tx pgx.Tx, store *commercestore.Postgres) *domainerr.DomainError) *domainerr.DomainError {
 	tx, err := service.db.Pool.Begin(ctx)

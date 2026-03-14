@@ -13,6 +13,7 @@ import (
 	api "github.com/horiondreher/go-web-api-boilerplate/api"
 	"github.com/horiondreher/go-web-api-boilerplate/internal/core"
 	"github.com/horiondreher/go-web-api-boilerplate/internal/core/domainerr"
+	"github.com/horiondreher/go-web-api-boilerplate/internal/utils"
 	"github.com/horiondreher/go-web-api-boilerplate/pkg/http-tools/httperr"
 	"github.com/horiondreher/go-web-api-boilerplate/pkg/http-tools/httputils"
 )
@@ -22,8 +23,9 @@ type Handler struct {
 }
 
 type createCartValidation struct {
-	BranchID string `validate:"required,uuid"`
-	CartID   string `validate:"required,uuid"`
+	BranchID   string `validate:"required,uuid"`
+	CartID     string `validate:"required,uuid"`
+	MerchantID string `validate:"required,uuid"`
 }
 
 type addCartItemValidation struct {
@@ -83,7 +85,7 @@ func cartItemCreatedResponse(item cartstore.CartItem) api.CartItemResponse {
 
 func (handler *Handler) GetCartDetail(w http.ResponseWriter, r *http.Request, cartID string, params api.GetCartDetailParams) {
 	handler.shared.Wrap(func(w http.ResponseWriter, r *http.Request) *domainerr.DomainError {
-		cart, err := handler.shared.ReadService.GetCartDetail(r.Context(), cartID)
+		cart, err := handler.shared.CartService.GetCartDetail(r.Context(), cartID)
 		if err != nil {
 			return err
 		}
@@ -140,9 +142,12 @@ func (handler *Handler) GetCartDetail(w http.ResponseWriter, r *http.Request, ca
 				if discountSummary == nil {
 					discountID := item.Discount.ID
 					discountType := string(item.Discount.Type)
-					discountValue := core.NumericToFloat64(item.Discount.Value)
+					discountValue := item.Discount.Value
 					discountAmount := 0.0
-					discountDescription := core.TextString(item.Discount.Description)
+					discountDescription := ""
+					if item.Discount.Description != nil {
+						discountDescription = *item.Discount.Description
+					}
 					discountSummary = &api.CartDiscountResponse{
 						Id:          &discountID,
 						Type:        &discountType,
@@ -213,19 +218,16 @@ func (handler *Handler) CreateCart(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			return err
 		}
-		merchantID, merchantErr := handler.shared.CurrentMerchantID(r)
-		if merchantErr != nil {
-			return merchantErr
-		}
 		validationErr := handler.shared.Validate.Struct(createCartValidation{
-			BranchID: requestBody.BranchId.String(),
-			CartID:   requestBody.CartId.String(),
+			BranchID:   requestBody.BranchId.String(),
+			CartID:     requestBody.CartId.String(),
+			MerchantID: requestBody.MerchantId.String(),
 		})
 		if validationErr != nil {
 			return httperr.MatchValidationError(validationErr)
 		}
 
-		cart, createErr := handler.shared.CommerceService.CreateCartHTTP(r.Context(), merchantID.String(), requestBody.BranchId.String(), "", requestBody.CartId.String())
+		cart, createErr := handler.shared.CartService.CreateCart(r.Context(), requestBody.CartId, requestBody.MerchantId, requestBody.BranchId, uuid.Nil)
 		if createErr != nil {
 			return createErr
 		}
@@ -257,11 +259,19 @@ func (handler *Handler) AddItemToCart(w http.ResponseWriter, r *http.Request, ca
 			return httperr.MatchValidationError(validationErr)
 		}
 
-		discountID := ""
+		discountID := uuid.Nil
 		if requestBody.DiscountId != nil {
-			discountID = requestBody.DiscountId.String()
+			discountID = *requestBody.DiscountId
 		}
-		item, addErr := handler.shared.CommerceService.AddItemToCartHTTP(r.Context(), cartID, requestBody.ProductId.String(), int32(requestBody.Quantity), addonIDs, discountID)
+		parsedCartID, cartErr := utils.ParseUUID(cartID, "cart id")
+		if cartErr != nil {
+			return cartErr
+		}
+		parsedAddonIDs := make([]uuid.UUID, 0)
+		if requestBody.AddonIds != nil {
+			parsedAddonIDs = append(parsedAddonIDs, (*requestBody.AddonIds)...)
+		}
+		item, addErr := handler.shared.CartService.AddItemToCart(r.Context(), parsedCartID, requestBody.ProductId, int32(requestBody.Quantity), parsedAddonIDs, discountID, 0)
 		if addErr != nil {
 			return addErr
 		}
@@ -285,7 +295,15 @@ func (handler *Handler) UpdateCartItem(w http.ResponseWriter, r *http.Request, c
 			return httperr.MatchValidationError(validationErr)
 		}
 
-		item, updateErr := handler.shared.CommerceService.UpdateCartItemQuantityHTTP(r.Context(), cartID, itemID, int32(requestBody.Quantity))
+		parsedCartID, cartErr := utils.ParseUUID(cartID, "cart id")
+		if cartErr != nil {
+			return cartErr
+		}
+		parsedItemID, itemErr := utils.ParseUUID(itemID, "item id")
+		if itemErr != nil {
+			return itemErr
+		}
+		item, updateErr := handler.shared.CartService.UpdateCartItemQuantity(r.Context(), parsedCartID, parsedItemID, int32(requestBody.Quantity))
 		if updateErr != nil {
 			return updateErr
 		}
@@ -301,7 +319,15 @@ func (handler *Handler) DeleteCartItem(w http.ResponseWriter, r *http.Request, c
 			return httperr.MatchValidationError(validationErr)
 		}
 
-		deleteErr := handler.shared.CommerceService.RemoveItemFromCartHTTP(r.Context(), cartID, itemID)
+		parsedCartID, cartErr := utils.ParseUUID(cartID, "cart id")
+		if cartErr != nil {
+			return cartErr
+		}
+		parsedItemID, itemErr := utils.ParseUUID(itemID, "item id")
+		if itemErr != nil {
+			return itemErr
+		}
+		deleteErr := handler.shared.CartService.RemoveItemFromCart(r.Context(), parsedCartID, parsedItemID)
 		if deleteErr != nil {
 			return deleteErr
 		}

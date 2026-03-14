@@ -5,57 +5,21 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	pgsqlc "github.com/horiondreher/go-web-api-boilerplate/internal/merchant/store"
+	commerce "github.com/horiondreher/go-web-api-boilerplate/internal/commerce"
+	commercestore "github.com/horiondreher/go-web-api-boilerplate/internal/commerce/store"
 
 	"github.com/horiondreher/go-web-api-boilerplate/internal/core/domainerr"
 )
 
-func merchantDiscountFromCreateRow(row pgsqlc.CreateMerchantDiscountRow) pgsqlc.MerchantDiscount {
-	return pgsqlc.MerchantDiscount{
-		ID:          row.ID,
-		MerchantID:  row.MerchantID,
-		Type:        row.Type,
-		Value:       row.Value,
-		Description: row.Description,
-		ValidFrom:   row.ValidFrom,
-		ValidTo:     row.ValidTo,
-		CreatedAt:   row.CreatedAt,
-		ProductID:   row.ProductID,
-		CategoryID:  row.CategoryID,
-	}
+func merchantDiscountFromGetRow(row commerce.GetMerchantDiscountRow) commerce.MerchantDiscount {
+	return commercestore.ToMerchantDiscountFromGetRow(row)
 }
 
-func merchantDiscountFromGetRow(row pgsqlc.GetMerchantDiscountRow) pgsqlc.MerchantDiscount {
-	return pgsqlc.MerchantDiscount{
-		ID:          row.ID,
-		MerchantID:  row.MerchantID,
-		Type:        row.Type,
-		Value:       row.Value,
-		Description: row.Description,
-		ValidFrom:   row.ValidFrom,
-		ValidTo:     row.ValidTo,
-		CreatedAt:   row.CreatedAt,
-		ProductID:   row.ProductID,
-		CategoryID:  row.CategoryID,
-	}
+func merchantDiscountFromListRow(row commerce.ListDiscountsByMerchantRow) commerce.MerchantDiscount {
+	return commercestore.ToMerchantDiscountFromListRow(row)
 }
 
-func merchantDiscountFromListRow(row pgsqlc.ListDiscountsByMerchantRow) pgsqlc.MerchantDiscount {
-	return pgsqlc.MerchantDiscount{
-		ID:          row.ID,
-		MerchantID:  row.MerchantID,
-		Type:        row.Type,
-		Value:       row.Value,
-		Description: row.Description,
-		ValidFrom:   row.ValidFrom,
-		ValidTo:     row.ValidTo,
-		CreatedAt:   row.CreatedAt,
-		ProductID:   row.ProductID,
-		CategoryID:  row.CategoryID,
-	}
-}
-
-func isDiscountActive(discount pgsqlc.MerchantDiscount, now time.Time) bool {
+func isDiscountActive(discount commerce.MerchantDiscount, now time.Time) bool {
 	if !discount.ValidFrom.IsZero() && now.Before(discount.ValidFrom) {
 		return false
 	}
@@ -65,7 +29,7 @@ func isDiscountActive(discount pgsqlc.MerchantDiscount, now time.Time) bool {
 	return true
 }
 
-func discountPriority(discount pgsqlc.MerchantDiscount, productID uuid.UUID, categoryID uuid.UUID) (int, bool) {
+func discountPriority(discount commerce.MerchantDiscount, productID uuid.UUID, categoryID uuid.UUID) (int, bool) {
 	switch {
 	case discount.ProductID != uuid.Nil:
 		return 1, discount.ProductID == productID
@@ -76,13 +40,13 @@ func discountPriority(discount pgsqlc.MerchantDiscount, productID uuid.UUID, cat
 	}
 }
 
-func (service *Service) resolveBestDiscountForProduct(ctx context.Context, merchantID uuid.UUID, productID uuid.UUID, categoryID uuid.UUID, now time.Time) (*pgsqlc.MerchantDiscount, *domainerr.DomainError) {
+func (service *Service) resolveBestDiscountForProduct(ctx context.Context, merchantID uuid.UUID, productID uuid.UUID, categoryID uuid.UUID, now time.Time) (*commerce.MerchantDiscount, *domainerr.DomainError) {
 	discounts, err := service.store.ListDiscountsByMerchant(ctx, merchantID)
 	if err != nil {
 		return nil, domainerr.MatchPostgresError(err)
 	}
 
-	var best *pgsqlc.MerchantDiscount
+	var best *commerce.MerchantDiscount
 	bestPriority := 99
 	for _, row := range discounts {
 		discount := merchantDiscountFromListRow(row)

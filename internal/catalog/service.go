@@ -26,6 +26,10 @@ type UpdateProductInventoryQuantityParams = catalogstore.UpdateProductInventoryQ
 type UpsertProductInventoryParams = catalogstore.UpsertProductInventoryParams
 
 type Service interface {
+	CreateProductCategoryByMerchant(ctx context.Context, viewerMerchantID uuid.UUID, viewerEmail string, merchantID string, name string, description string) (ProductCategory, *domainerr.DomainError)
+	CreateProductByMerchantHTTP(ctx context.Context, viewerMerchantID uuid.UUID, viewerEmail string, merchantID string, categoryID string, name string, description string, basePrice float64, imageURL string, trackInventory bool) (Product, *domainerr.DomainError)
+	AddProductAddonByMerchantHTTP(ctx context.Context, viewerMerchantID uuid.UUID, viewerEmail string, merchantID string, productID string, name string, price float64) (ProductAddon, *domainerr.DomainError)
+	UpsertInventoryByMerchant(ctx context.Context, viewerMerchantID uuid.UUID, viewerEmail string, merchantID string, productID string, branchID string, quantity int32) (ProductInventory, *domainerr.DomainError)
 	CreateProductByMerchant(ctx context.Context, merchantActorID uuid.UUID, merchantID uuid.UUID, categoryID uuid.UUID, productName string, description string, basePrice float64, imageURL string, trackInventory bool) (Product, *domainerr.DomainError)
 	AddProductAddonByMerchant(ctx context.Context, merchantActorID uuid.UUID, merchantID uuid.UUID, productID uuid.UUID, addonName string, addonPrice float64) (ProductAddon, *domainerr.DomainError)
 	ListProductCategoriesByMerchant(ctx context.Context, merchantID string) ([]ProductCategory, *domainerr.DomainError)

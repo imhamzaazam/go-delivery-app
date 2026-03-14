@@ -414,7 +414,7 @@ func normalizeAddonIDs(addonIDs []uuid.UUID) []uuid.UUID {
 }
 
 func calculateDiscountAmount(discount pgsqlc.MerchantDiscount, subtotal float64) float64 {
-	discountValue := utils.NumericToFloat(discount.Value)
+	discountValue := discount.Value
 	switch discount.Type {
 	case pgsqlc.DiscountTypePercentage:
 		return utils.Round2((subtotal * discountValue) / 100)

@@ -24,7 +24,7 @@ func (handler *Handler) GetMonthlySalesReport(w http.ResponseWriter, r *http.Req
 			return authErr
 		}
 
-		report, err := handler.shared.ReadService.GetMonthlySalesReport(r.Context(), authUser.MerchantID, authUser.Email, authUser.MerchantID.String(), params.Month, params.Year)
+		report, err := handler.shared.ReportService.GetMonthlySalesReport(r.Context(), authUser.MerchantID, authUser.Email, authUser.MerchantID.String(), params.Month, params.Year)
 		if err != nil {
 			return err
 		}

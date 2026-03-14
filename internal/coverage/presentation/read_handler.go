@@ -11,7 +11,7 @@ import (
 
 func (handler *Handler) ListAreas(w http.ResponseWriter, r *http.Request) {
 	handler.shared.ServeAuthenticated(w, r, func(w http.ResponseWriter, r *http.Request) *domainerr.DomainError {
-		areas, err := handler.shared.ReadService.ListAreas(r.Context())
+		areas, err := handler.shared.CoverageService.ListAreas(r.Context())
 		if err != nil {
 			return err
 		}
@@ -27,7 +27,7 @@ func (handler *Handler) ListAreas(w http.ResponseWriter, r *http.Request) {
 
 func (handler *Handler) ListZonesByArea(w http.ResponseWriter, r *http.Request, areaID string) {
 	handler.shared.ServeAuthenticated(w, r, func(w http.ResponseWriter, r *http.Request) *domainerr.DomainError {
-		zones, err := handler.shared.ReadService.ListZonesByArea(r.Context(), areaID)
+		zones, err := handler.shared.CoverageService.ListZonesByArea(r.Context(), areaID)
 		if err != nil {
 			return err
 		}
@@ -48,7 +48,7 @@ func (handler *Handler) ListMerchantServiceZonesByMerchant(w http.ResponseWriter
 			return merchantErr
 		}
 
-		rows, err := handler.shared.ReadService.ListMerchantServiceZonesByMerchant(r.Context(), merchantID.String())
+		rows, err := handler.shared.CoverageService.ListMerchantServiceZonesByMerchant(r.Context(), merchantID.String())
 		if err != nil {
 			return err
 		}
@@ -82,7 +82,7 @@ func (handler *Handler) CheckMerchantServiceZoneCoverage(w http.ResponseWriter, 
 			return httperr.MatchValidationError(validationErr)
 		}
 
-		result, checkErr := handler.shared.ReadService.CheckMerchantServiceZoneCoverage(r.Context(), merchantID.String(), requestBody.Latitude, requestBody.Longitude)
+		result, checkErr := handler.shared.CoverageService.CheckMerchantServiceZoneCoverage(r.Context(), merchantID.String(), requestBody.Latitude, requestBody.Longitude)
 		if checkErr != nil {
 			return checkErr
 		}

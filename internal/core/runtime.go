@@ -13,9 +13,13 @@ import (
 	"github.com/rs/zerolog/log"
 
 	"github.com/horiondreher/go-web-api-boilerplate/internal/actor"
-	"github.com/horiondreher/go-web-api-boilerplate/internal/commerce"
+	"github.com/horiondreher/go-web-api-boilerplate/internal/cart"
+	"github.com/horiondreher/go-web-api-boilerplate/internal/catalog"
 	"github.com/horiondreher/go-web-api-boilerplate/internal/core/domainerr"
+	"github.com/horiondreher/go-web-api-boilerplate/internal/coverage"
 	"github.com/horiondreher/go-web-api-boilerplate/internal/merchant"
+	"github.com/horiondreher/go-web-api-boilerplate/internal/order"
+	"github.com/horiondreher/go-web-api-boilerplate/internal/report"
 	"github.com/horiondreher/go-web-api-boilerplate/internal/utils"
 	"github.com/horiondreher/go-web-api-boilerplate/pkg/http-tools/httputils"
 	middleware "github.com/horiondreher/go-web-api-boilerplate/pkg/http-tools/middleware"
@@ -31,9 +35,12 @@ const (
 
 type Shared struct {
 	ActorService    actor.Service
-	CommerceService commerce.Service
-	MerchantService merchant.Service
-	ReadService     commerce.ReadService
+	CartService     cart.Service
+	CatalogService  catalog.Service
+	CoverageService coverage.Service
+	MerchantService *merchant.MerchantService
+	OrderService    order.Service
+	ReportService   report.Service
 	Config          *utils.Config
 	TokenMaker      *token.JWTMaker
 	Validate        *validator.Validate

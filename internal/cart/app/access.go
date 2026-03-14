@@ -7,7 +7,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/horiondreher/go-web-api-boilerplate/internal/actor/store/generated"
-	merchantstore "github.com/horiondreher/go-web-api-boilerplate/internal/merchant/store"
+	commerce "github.com/horiondreher/go-web-api-boilerplate/internal/commerce"
 
 	"github.com/horiondreher/go-web-api-boilerplate/internal/core/domainerr"
 )
@@ -47,7 +47,7 @@ func (service *Service) requireMerchantManageAccess(ctx context.Context, viewerM
 		return actorstore.GetActorProfileByMerchantAndEmailRow{}, viewerErr
 	}
 
-	isAdmin, adminErr := service.hasRole(ctx, viewer.UID, merchantstore.RoleTypeAdmin, uuid.Nil)
+	isAdmin, adminErr := service.hasRole(ctx, viewer.UID, commerce.RoleTypeAdmin, uuid.Nil)
 	if adminErr != nil {
 		return actorstore.GetActorProfileByMerchantAndEmailRow{}, domainerr.NewInternalError(adminErr)
 	}
@@ -55,7 +55,7 @@ func (service *Service) requireMerchantManageAccess(ctx context.Context, viewerM
 		return viewer, nil
 	}
 
-	isMerchant, merchantErr := service.hasRole(ctx, viewer.UID, merchantstore.RoleTypeMerchant, targetMerchantID)
+	isMerchant, merchantErr := service.hasRole(ctx, viewer.UID, commerce.RoleTypeMerchant, targetMerchantID)
 	if merchantErr != nil {
 		return actorstore.GetActorProfileByMerchantAndEmailRow{}, domainerr.NewInternalError(merchantErr)
 	}

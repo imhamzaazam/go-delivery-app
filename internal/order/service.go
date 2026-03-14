@@ -78,8 +78,11 @@ type ItemDetail struct {
 }
 
 type Service interface {
+	PlaceOrderFromCartHTTP(ctx context.Context, cartID string, paymentType string, deliveryAddress string, customerName string, customerPhone string) (Bill, *domainerr.DomainError)
 	PlaceOrderFromCart(ctx context.Context, merchantActorID uuid.UUID, cartID uuid.UUID, paymentType PaymentType, deliveryAddress string, customerName string, customerPhone string) (Bill, *domainerr.DomainError)
+	UpdateOrderStatusHTTP(ctx context.Context, viewerMerchantID uuid.UUID, viewerEmail string, merchantID string, orderID string, status string) (Order, *domainerr.DomainError)
 	UpdateOrderStatus(ctx context.Context, merchantActorID uuid.UUID, merchantID uuid.UUID, orderID uuid.UUID, status OrderStatusType) (Order, *domainerr.DomainError)
+	GetPublicOrderDetail(ctx context.Context, orderID string) (Detail, *domainerr.DomainError)
 	GetOrderDetail(ctx context.Context, viewerMerchantID uuid.UUID, viewerEmail string, orderID string) (Detail, *domainerr.DomainError)
 	ListOrdersByMerchant(ctx context.Context, viewerMerchantID uuid.UUID, viewerEmail string, merchantID string) ([]Order, *domainerr.DomainError)
 }

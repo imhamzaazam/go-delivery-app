@@ -29,7 +29,7 @@ func (service *Service) PlaceOrderFromCartHTTP(ctx context.Context, cartID strin
 		return orderdomain.Bill{}, placeErr
 	}
 
-	return toDomainBill(orderBill), nil
+	return orderBill, nil
 }
 
 func (service *Service) UpdateOrderStatusHTTP(ctx context.Context, viewerMerchantID uuid.UUID, viewerEmail string, merchantID string, orderID string, status string) (orderdomain.Order, *domainerr.DomainError) {
@@ -104,35 +104,4 @@ func validateParsedOrderStatus(status orderdomain.OrderStatusType) *domainerr.Do
 	}
 
 	return nil
-}
-
-func toDomainBill(bill OrderBill) orderdomain.Bill {
-	lineItems := make([]orderdomain.LineBill, 0, len(bill.LineItems))
-	for _, line := range bill.LineItems {
-		lineItems = append(lineItems, orderdomain.LineBill{
-			ProductID:      line.ProductID,
-			ProductName:    line.ProductName,
-			BasePrice:      line.BasePrice,
-			PaymentMethod:  line.PaymentMethod,
-			Quantity:       line.Quantity,
-			BaseAmount:     line.BaseAmount,
-			AddonAmount:    line.AddonAmount,
-			DiscountAmount: line.DiscountAmount,
-			FinalPrice:     line.FinalPrice,
-			TaxAmount:      line.TaxAmount,
-			Vat:            line.Vat,
-			LineTotal:      line.LineTotal,
-			TotalPrice:     line.TotalPrice,
-		})
-	}
-
-	return orderdomain.Bill{
-		OrderID:     bill.OrderID,
-		PaymentType: bill.PaymentType,
-		VatRate:     bill.VatRate,
-		Subtotal:    bill.Subtotal,
-		TotalTax:    bill.TotalTax,
-		Total:       bill.Total,
-		LineItems:   lineItems,
-	}
 }

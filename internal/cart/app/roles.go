@@ -4,11 +4,11 @@ import (
 	"context"
 
 	"github.com/google/uuid"
-	pgsqlc "github.com/horiondreher/go-web-api-boilerplate/internal/merchant/store"
+	commerce "github.com/horiondreher/go-web-api-boilerplate/internal/commerce"
 	"github.com/jackc/pgx/v5"
 )
 
-func (service *Service) hasRole(ctx context.Context, actorID uuid.UUID, roleType pgsqlc.RoleType, merchantID uuid.UUID) (bool, error) {
+func (service *Service) hasRole(ctx context.Context, actorID uuid.UUID, roleType commerce.RoleType, merchantID uuid.UUID) (bool, error) {
 	var one int
 	var err error
 	if merchantID == uuid.Nil {
@@ -39,7 +39,7 @@ func (service *Service) hasRole(ctx context.Context, actorID uuid.UUID, roleType
 	return true, nil
 }
 
-func (service *Service) getRoleIDByType(ctx context.Context, merchantID uuid.UUID, roleType pgsqlc.RoleType) (uuid.UUID, error) {
+func (service *Service) getRoleIDByType(ctx context.Context, merchantID uuid.UUID, roleType commerce.RoleType) (uuid.UUID, error) {
 	var roleID uuid.UUID
 	err := service.db.QueryRow(ctx, `
         SELECT id

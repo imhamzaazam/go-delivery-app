@@ -29,7 +29,7 @@ func (handler *Handler) CreateProductCategoryByMerchant(w http.ResponseWriter, r
 		if requestBody.Description != nil {
 			description = *requestBody.Description
 		}
-		category, createErr := handler.shared.CommerceService.CreateProductCategoryByMerchant(r.Context(), authUser.MerchantID, authUser.Email, authUser.MerchantID.String(), requestBody.Name, description)
+		category, createErr := handler.shared.CatalogService.CreateProductCategoryByMerchant(r.Context(), authUser.MerchantID, authUser.Email, authUser.MerchantID.String(), requestBody.Name, description)
 		if createErr != nil {
 			return createErr
 		}
@@ -70,7 +70,7 @@ func (handler *Handler) CreateProductByMerchant(w http.ResponseWriter, r *http.R
 		if requestBody.TrackInventory != nil {
 			trackInventory = *requestBody.TrackInventory
 		}
-		product, createErr := handler.shared.CommerceService.CreateProductByMerchantHTTP(r.Context(), authUser.MerchantID, authUser.Email, authUser.MerchantID.String(), requestBody.CategoryId.String(), requestBody.Name, description, requestBody.BasePrice, imageURL, trackInventory)
+		product, createErr := handler.shared.CatalogService.CreateProductByMerchantHTTP(r.Context(), authUser.MerchantID, authUser.Email, authUser.MerchantID.String(), requestBody.CategoryId.String(), requestBody.Name, description, requestBody.BasePrice, imageURL, trackInventory)
 		if createErr != nil {
 			return createErr
 		}
@@ -98,7 +98,7 @@ func (handler *Handler) AddProductAddonByMerchant(w http.ResponseWriter, r *http
 			return authErr
 		}
 
-		addon, createErr := handler.shared.CommerceService.AddProductAddonByMerchantHTTP(r.Context(), authUser.MerchantID, authUser.Email, authUser.MerchantID.String(), productID, requestBody.Name, requestBody.Price)
+		addon, createErr := handler.shared.CatalogService.AddProductAddonByMerchantHTTP(r.Context(), authUser.MerchantID, authUser.Email, authUser.MerchantID.String(), productID, requestBody.Name, requestBody.Price)
 		if createErr != nil {
 			return createErr
 		}
@@ -127,7 +127,7 @@ func (handler *Handler) UpsertInventoryByMerchant(w http.ResponseWriter, r *http
 			return authErr
 		}
 
-		inventory, upsertErr := handler.shared.CommerceService.UpsertInventoryByMerchant(r.Context(), authUser.MerchantID, authUser.Email, authUser.MerchantID.String(), requestBody.ProductId.String(), requestBody.BranchId.String(), int32(requestBody.Quantity))
+		inventory, upsertErr := handler.shared.CatalogService.UpsertInventoryByMerchant(r.Context(), authUser.MerchantID, authUser.Email, authUser.MerchantID.String(), requestBody.ProductId.String(), requestBody.BranchId.String(), int32(requestBody.Quantity))
 		if upsertErr != nil {
 			return upsertErr
 		}

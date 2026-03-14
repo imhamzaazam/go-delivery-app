@@ -30,7 +30,7 @@ func (handler *Handler) CreateArea(w http.ResponseWriter, r *http.Request) {
 			return viewerErr
 		}
 
-		area, createErr := handler.shared.CommerceService.CreateAreaHTTP(r.Context(), viewer.UID, viewer.MerchantID, requestBody.Name, string(requestBody.City))
+		area, createErr := handler.shared.CoverageService.CreateAreaHTTP(r.Context(), viewer.UID, viewer.MerchantID, requestBody.Name, string(requestBody.City))
 		if createErr != nil {
 			return createErr
 		}
@@ -59,7 +59,7 @@ func (handler *Handler) CreateZone(w http.ResponseWriter, r *http.Request, areaI
 			return viewerErr
 		}
 
-		zone, createErr := handler.shared.CommerceService.CreateZoneHTTP(r.Context(), viewer.UID, viewer.MerchantID, areaID, requestBody.Name, requestBody.CoordinatesWkt)
+		zone, createErr := handler.shared.CoverageService.CreateZoneHTTP(r.Context(), viewer.UID, viewer.MerchantID, areaID, requestBody.Name, requestBody.CoordinatesWkt)
 		if createErr != nil {
 			return createErr
 		}
@@ -87,7 +87,7 @@ func (handler *Handler) CreateMerchantServiceZoneByMerchant(w http.ResponseWrite
 			return authErr
 		}
 
-		serviceZone, createErr := handler.shared.CommerceService.CreateMerchantServiceZoneByMerchant(r.Context(), authUser.MerchantID, authUser.Email, authUser.MerchantID.String(), requestBody.ZoneId.String(), requestBody.BranchId.String())
+		serviceZone, createErr := handler.shared.CoverageService.CreateMerchantServiceZoneByMerchant(r.Context(), authUser.MerchantID, authUser.Email, authUser.MerchantID.String(), requestBody.ZoneId.String(), requestBody.BranchId.String())
 		if createErr != nil {
 			return createErr
 		}

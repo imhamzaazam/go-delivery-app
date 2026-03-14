@@ -4,11 +4,11 @@ import (
 	"context"
 
 	"github.com/google/uuid"
-	merchantstore "github.com/horiondreher/go-web-api-boilerplate/internal/merchant/store"
+	commerce "github.com/horiondreher/go-web-api-boilerplate/internal/commerce"
 )
 
 func (service *Service) canViewMerchant(ctx context.Context, actorID uuid.UUID, merchantID uuid.UUID) (bool, error) {
-	isAdmin, adminErr := service.hasRole(ctx, actorID, merchantstore.RoleTypeAdmin, uuid.Nil)
+	isAdmin, adminErr := service.hasRole(ctx, actorID, commerce.RoleTypeAdmin, uuid.Nil)
 	if adminErr != nil {
 		return false, adminErr
 	}
@@ -16,7 +16,7 @@ func (service *Service) canViewMerchant(ctx context.Context, actorID uuid.UUID, 
 		return true, nil
 	}
 
-	isMerchant, merchantErr := service.hasRole(ctx, actorID, merchantstore.RoleTypeMerchant, merchantID)
+	isMerchant, merchantErr := service.hasRole(ctx, actorID, commerce.RoleTypeMerchant, merchantID)
 	if merchantErr != nil {
 		return false, merchantErr
 	}

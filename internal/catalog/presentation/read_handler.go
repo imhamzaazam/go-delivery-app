@@ -15,7 +15,7 @@ func (handler *Handler) ListProductCategoriesByMerchant(w http.ResponseWriter, r
 			return merchantErr
 		}
 
-		categories, err := handler.shared.ReadService.ListProductCategoriesByMerchant(r.Context(), merchantID.String())
+		categories, err := handler.shared.CatalogService.ListProductCategoriesByMerchant(r.Context(), merchantID.String())
 		if err != nil {
 			return err
 		}
@@ -36,7 +36,7 @@ func (handler *Handler) ListProductsByMerchant(w http.ResponseWriter, r *http.Re
 			return merchantErr
 		}
 
-		products, err := handler.shared.ReadService.ListProductsByMerchant(r.Context(), merchantID.String())
+		products, err := handler.shared.CatalogService.ListProductsByMerchant(r.Context(), merchantID.String())
 		if err != nil {
 			return err
 		}
@@ -57,7 +57,7 @@ func (handler *Handler) GetProductDetail(w http.ResponseWriter, r *http.Request,
 			return merchantErr
 		}
 
-		product, err := handler.shared.ReadService.GetProductDetail(r.Context(), merchantID.String(), productID)
+		product, err := handler.shared.CatalogService.GetProductDetail(r.Context(), merchantID.String(), productID)
 		if err != nil {
 			return err
 		}
@@ -73,7 +73,7 @@ func (handler *Handler) ListProductAddonsByProduct(w http.ResponseWriter, r *htt
 			return merchantErr
 		}
 
-		addons, err := handler.shared.ReadService.ListProductAddonsByProduct(r.Context(), merchantID.String(), productID)
+		addons, err := handler.shared.CatalogService.ListProductAddonsByProduct(r.Context(), merchantID.String(), productID)
 		if err != nil {
 			return err
 		}
@@ -94,7 +94,7 @@ func (handler *Handler) ListInventoryByMerchant(w http.ResponseWriter, r *http.R
 			return viewerErr
 		}
 
-		items, err := handler.shared.ReadService.ListInventoryByMerchant(r.Context(), viewer.UID, viewer.MerchantID.String())
+		items, err := handler.shared.CatalogService.ListInventoryByMerchant(r.Context(), viewer.UID, viewer.MerchantID.String())
 		if err != nil {
 			return err
 		}

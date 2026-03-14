@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"sort"
+	"time"
 
 	"github.com/google/uuid"
 	commercestore "github.com/horiondreher/go-web-api-boilerplate/internal/commerce/store"
@@ -13,10 +14,11 @@ import (
 
 	pgsqlc "github.com/horiondreher/go-web-api-boilerplate/internal/commerce"
 	"github.com/horiondreher/go-web-api-boilerplate/internal/core/domainerr"
+	orderdomain "github.com/horiondreher/go-web-api-boilerplate/internal/order"
 	"github.com/horiondreher/go-web-api-boilerplate/internal/utils"
 )
 
-func defaultVATRate(paymentType pgsqlc.PaymentType) (float64, *domainerr.DomainError) {
+func defaultVATRate(paymentType orderdomain.PaymentType) (float64, *domainerr.DomainError) {
 	switch paymentType {
 	case pgsqlc.PaymentTypeCard:
 		return 8, nil
@@ -27,7 +29,7 @@ func defaultVATRate(paymentType pgsqlc.PaymentType) (float64, *domainerr.DomainE
 	}
 }
 
-func (service *Service) PlaceOrderFromCart(ctx context.Context, merchantActorID uuid.UUID, cartID uuid.UUID, paymentType pgsqlc.PaymentType, deliveryAddress string, customerName string, customerPhone string) (OrderBill, *domainerr.DomainError) {
+func (service *Service) PlaceOrderFromCart(ctx context.Context, merchantActorID uuid.UUID, cartID uuid.UUID, paymentType orderdomain.PaymentType, deliveryAddress string, customerName string, customerPhone string) (orderdomain.Bill, *domainerr.DomainError) {
 	var cart pgsqlc.Cart
 	cartErr := service.db.QueryRow(ctx, `
 		SELECT id, merchant_id, branch_id, actor_id, created_at, updated_at
@@ -54,6 +56,17 @@ func (service *Service) PlaceOrderFromCart(ctx context.Context, merchantActorID 
 				return OrderBill{}, domainerr.NewDomainError(http.StatusForbidden, domainerr.UnauthorizedError, "merchant or cart customer role required", fmt.Errorf("merchant or cart customer role required"))
 			}
 		}
+	}
+
+	branch, branchErr := service.store.GetBranch(ctx, pgsqlc.GetBranchParams{
+		MerchantID: cart.MerchantID,
+		ID:         cart.BranchID,
+	})
+	if branchErr != nil {
+		return OrderBill{}, domainerr.MatchPostgresError(branchErr)
+	}
+	if !utils.IsBranchOpenAt(branch.OpeningTimeMinutes, branch.ClosingTimeMinutes, time.Now()) {
+		return OrderBill{}, domainerr.NewDomainError(http.StatusBadRequest, domainerr.ValidationError, "branch is closed", fmt.Errorf("cannot place order: branch is not open"))
 	}
 
 	type addonSnapshot struct {
@@ -85,7 +98,7 @@ func (service *Service) PlaceOrderFromCart(ctx context.Context, merchantActorID 
 		addonQuantities map[uuid.UUID]int32
 	}
 
-	var bill OrderBill
+	var bill orderdomain.Bill
 	txErr := service.runInTx(ctx, func(tx pgx.Tx, store *commercestore.Postgres) *domainerr.DomainError {
 		vatRate, vatErr := defaultVATRate(paymentType)
 		if vatErr != nil {
@@ -210,7 +223,7 @@ func (service *Service) PlaceOrderFromCart(ctx context.Context, merchantActorID 
 			return domainerr.NewDomainError(http.StatusBadRequest, domainerr.ValidationError, "cart has no items", fmt.Errorf("cart has no items"))
 		}
 
-		lineItems := make([]OrderLineBill, 0, len(cartLines))
+		lineItems := make([]orderdomain.LineBill, 0, len(cartLines))
 		total := 0.0
 		totalTax := 0.0
 		subtotal := 0.0
@@ -274,7 +287,7 @@ func (service *Service) PlaceOrderFromCart(ctx context.Context, merchantActorID 
 			taxAmount := utils.Round2(lineSubtotal * (vatRate / 100.0))
 			lineTotal := utils.Round2(lineSubtotal + taxAmount)
 
-			lineBill := OrderLineBill{
+			lineBill := orderdomain.LineBill{
 				ProductID:      line.product.ID,
 				ProductName:    line.product.Name,
 				BasePrice:      unitBasePrice,
@@ -353,7 +366,7 @@ func (service *Service) PlaceOrderFromCart(ctx context.Context, merchantActorID 
 			return domainerr.MatchPostgresError(updateErr)
 		}
 
-		bill = OrderBill{
+		bill = orderdomain.Bill{
 			OrderID:     createdOrder.ID,
 			PaymentType: string(paymentType),
 			VatRate:     vatRate,
@@ -366,7 +379,7 @@ func (service *Service) PlaceOrderFromCart(ctx context.Context, merchantActorID 
 		return nil
 	})
 	if txErr != nil {
-		return OrderBill{}, txErr
+		return orderdomain.Bill{}, txErr
 	}
 
 	return bill, nil

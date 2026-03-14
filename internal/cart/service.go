@@ -43,6 +43,7 @@ type ItemDetail struct {
 type Service interface {
 	CreateCart(ctx context.Context, cartID uuid.UUID, merchantID uuid.UUID, branchID uuid.UUID, actorID uuid.UUID) (Cart, *domainerr.DomainError)
 	AddItemToCart(ctx context.Context, cartID uuid.UUID, productID uuid.UUID, quantity int32, addonIDs []uuid.UUID, discountID uuid.UUID, discountAmount float64) (CartItem, *domainerr.DomainError)
+	UpdateCartItemQuantity(ctx context.Context, cartID uuid.UUID, itemID uuid.UUID, quantity int32) (CartItem, *domainerr.DomainError)
 	RemoveItemFromCart(ctx context.Context, cartID uuid.UUID, itemID uuid.UUID) *domainerr.DomainError
 	GetCartDetail(ctx context.Context, cartID string) (Detail, *domainerr.DomainError)
 }

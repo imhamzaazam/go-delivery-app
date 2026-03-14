@@ -7,6 +7,7 @@ import (
 	"github.com/horiondreher/go-web-api-boilerplate/internal/catalog"
 	"github.com/horiondreher/go-web-api-boilerplate/internal/coverage"
 	"github.com/horiondreher/go-web-api-boilerplate/internal/merchant"
+	merchantstore "github.com/horiondreher/go-web-api-boilerplate/internal/merchant/store"
 	"github.com/horiondreher/go-web-api-boilerplate/internal/order"
 	"github.com/horiondreher/go-web-api-boilerplate/internal/report"
 )
@@ -76,23 +77,23 @@ type MerchantServiceZone = coverage.MerchantServiceZone
 type CreateMerchantServiceZoneParams = coverage.CreateMerchantServiceZoneParams
 
 type Branch = merchant.Branch
-type CreateBranchParams = merchant.CreateBranchParams
-type CreateBranchRow = merchant.CreateBranchRow
-type GetBranchParams = merchant.GetBranchParams
-type GetBranchRow = merchant.GetBranchRow
-type ListBranchesByMerchantRow = merchant.ListBranchesByMerchantRow
+type CreateBranchParams = merchantstore.CreateBranchParams
+type CreateBranchRow = merchantstore.CreateBranchRow
+type GetBranchParams = merchantstore.GetBranchParams
+type GetBranchRow = merchantstore.GetBranchRow
+type ListBranchesByMerchantRow = merchantstore.ListBranchesByMerchantRow
 type Merchant = merchant.Merchant
 type MerchantCategory = merchant.MerchantCategory
 type MerchantDiscount = merchant.MerchantDiscount
-type CreateMerchantParams = merchant.CreateMerchantParams
-type UpdateMerchantParams = merchant.UpdateMerchantParams
-type CreateMerchantDiscountParams = merchant.CreateMerchantDiscountParams
-type CreateMerchantDiscountRow = merchant.CreateMerchantDiscountRow
-type GetMerchantDiscountParams = merchant.GetMerchantDiscountParams
-type GetMerchantDiscountRow = merchant.GetMerchantDiscountRow
-type ListDiscountsByMerchantRow = merchant.ListDiscountsByMerchantRow
+type CreateMerchantParams = merchantstore.CreateMerchantParams
+type UpdateMerchantParams = merchantstore.UpdateMerchantParams
+type CreateMerchantDiscountParams = merchantstore.CreateMerchantDiscountParams
+type CreateMerchantDiscountRow = merchantstore.CreateMerchantDiscountRow
+type GetMerchantDiscountParams = merchantstore.GetMerchantDiscountParams
+type GetMerchantDiscountRow = merchantstore.GetMerchantDiscountRow
+type ListDiscountsByMerchantRow = merchantstore.ListDiscountsByMerchantRow
 type Role = merchant.Role
-type CreateRoleParams = merchant.CreateRoleParams
+type CreateRoleParams = merchantstore.CreateRoleParams
 type CityType = merchant.CityType
 type DiscountType = merchant.DiscountType
 type RoleType = merchant.RoleType

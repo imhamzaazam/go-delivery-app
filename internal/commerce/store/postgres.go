@@ -104,35 +104,75 @@ func (store *Postgres) ListMerchantServiceZonesByMerchant(ctx context.Context, m
 }
 
 func (store *Postgres) CreateMerchant(ctx context.Context, arg pgsqlc.CreateMerchantParams) (pgsqlc.Merchant, error) {
-	return store.merchant.CreateMerchant(ctx, arg)
+	m, err := store.merchant.CreateMerchant(ctx, arg)
+	if err != nil {
+		return pgsqlc.Merchant{}, err
+	}
+	return toMerchant(m), nil
 }
 
 func (store *Postgres) UpdateMerchant(ctx context.Context, arg pgsqlc.UpdateMerchantParams) (pgsqlc.Merchant, error) {
-	return store.merchant.UpdateMerchant(ctx, arg)
+	m, err := store.merchant.UpdateMerchant(ctx, arg)
+	if err != nil {
+		return pgsqlc.Merchant{}, err
+	}
+	return toMerchant(m), nil
 }
 
 func (store *Postgres) GetMerchant(ctx context.Context, id uuid.UUID) (pgsqlc.Merchant, error) {
-	return store.merchant.GetMerchant(ctx, id)
+	m, err := store.merchant.GetMerchant(ctx, id)
+	if err != nil {
+		return pgsqlc.Merchant{}, err
+	}
+	return toMerchant(m), nil
 }
 
 func (store *Postgres) ListMerchants(ctx context.Context) ([]pgsqlc.Merchant, error) {
-	return store.merchant.ListMerchants(ctx)
+	items, err := store.merchant.ListMerchants(ctx)
+	if err != nil {
+		return nil, err
+	}
+	result := make([]pgsqlc.Merchant, 0, len(items))
+	for _, m := range items {
+		result = append(result, toMerchant(m))
+	}
+	return result, nil
 }
 
 func (store *Postgres) CreateRole(ctx context.Context, arg pgsqlc.CreateRoleParams) (pgsqlc.Role, error) {
-	return store.merchant.CreateRole(ctx, arg)
+	r, err := store.merchant.CreateRole(ctx, arg)
+	if err != nil {
+		return pgsqlc.Role{}, err
+	}
+	return toRole(r), nil
 }
 
 func (store *Postgres) ListRolesByMerchant(ctx context.Context, merchantID uuid.UUID) ([]pgsqlc.Role, error) {
-	return store.merchant.ListRolesByMerchant(ctx, merchantID)
+	items, err := store.merchant.ListRolesByMerchant(ctx, merchantID)
+	if err != nil {
+		return nil, err
+	}
+	result := make([]pgsqlc.Role, 0, len(items))
+	for _, r := range items {
+		result = append(result, toRole(r))
+	}
+	return result, nil
 }
 
 func (store *Postgres) CreateBranch(ctx context.Context, arg pgsqlc.CreateBranchParams) (pgsqlc.Branch, error) {
-	return store.merchant.CreateBranch(ctx, arg)
+	b, err := store.merchant.CreateBranch(ctx, arg)
+	if err != nil {
+		return pgsqlc.Branch{}, err
+	}
+	return toBranch(b), nil
 }
 
 func (store *Postgres) GetBranch(ctx context.Context, arg pgsqlc.GetBranchParams) (pgsqlc.Branch, error) {
-	return store.merchant.GetBranch(ctx, arg)
+	b, err := store.merchant.GetBranch(ctx, arg)
+	if err != nil {
+		return pgsqlc.Branch{}, err
+	}
+	return toBranch(b), nil
 }
 
 func (store *Postgres) ListBranchesByMerchant(ctx context.Context, merchantID uuid.UUID) ([]pgsqlc.ListBranchesByMerchantRow, error) {

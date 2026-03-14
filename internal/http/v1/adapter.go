@@ -10,13 +10,16 @@ import (
 	actorservice "github.com/horiondreher/go-web-api-boilerplate/internal/actor"
 	actor "github.com/horiondreher/go-web-api-boilerplate/internal/actor/presentation"
 	auth "github.com/horiondreher/go-web-api-boilerplate/internal/auth/presentation"
+	cartservice "github.com/horiondreher/go-web-api-boilerplate/internal/cart"
 	cart "github.com/horiondreher/go-web-api-boilerplate/internal/cart/presentation"
+	catalogservice "github.com/horiondreher/go-web-api-boilerplate/internal/catalog"
 	catalog "github.com/horiondreher/go-web-api-boilerplate/internal/catalog/presentation"
-	commerce "github.com/horiondreher/go-web-api-boilerplate/internal/commerce"
+	coverageservice "github.com/horiondreher/go-web-api-boilerplate/internal/coverage"
 	coverage "github.com/horiondreher/go-web-api-boilerplate/internal/coverage/presentation"
-	merchantservice "github.com/horiondreher/go-web-api-boilerplate/internal/merchant"
-	merchant "github.com/horiondreher/go-web-api-boilerplate/internal/merchant/presentation"
+	merchant "github.com/horiondreher/go-web-api-boilerplate/internal/merchant"
+	orderservice "github.com/horiondreher/go-web-api-boilerplate/internal/order"
 	order "github.com/horiondreher/go-web-api-boilerplate/internal/order/presentation"
+	reportservice "github.com/horiondreher/go-web-api-boilerplate/internal/report"
 	report "github.com/horiondreher/go-web-api-boilerplate/internal/report/presentation"
 
 	"github.com/google/uuid"
@@ -35,9 +38,12 @@ import (
 
 type HTTPAdapter struct {
 	actorService    actorservice.Service
-	commerceService commerce.Service
-	merchantService merchantservice.Service
-	readService     commerce.ReadService
+	cartService     cartservice.Service
+	catalogService  catalogservice.Service
+	coverageService coverageservice.Service
+	merchantService *merchant.MerchantService
+	orderService    orderservice.Service
+	reportService   reportservice.Service
 
 	config *utils.Config
 	router *chi.Mux
@@ -45,30 +51,50 @@ type HTTPAdapter struct {
 
 	tokenMaker *token.JWTMaker
 	shared     *core.Shared
-
-	actorHandler    *actor.Handler
-	authHandler     *auth.Handler
-	cartHandler     *cart.Handler
-	catalogHandler  *catalog.Handler
-	coverageHandler *coverage.Handler
-	merchantHandler *merchant.Handler
-	orderHandler    *order.Handler
-	reportHandler   *report.Handler
+	openapi    *openAPIServer
 }
+
+type actorAPIServer = actor.Handler
+type authAPIServer = auth.Handler
+type cartAPIServer = cart.Handler
+type catalogAPIServer = catalog.Handler
+type coverageAPIServer = coverage.Handler
+type merchantAPIServer = merchant.Handler
+type orderAPIServer = order.Handler
+type reportAPIServer = report.Handler
+
+type openAPIServer struct {
+	*actorAPIServer
+	*authAPIServer
+	*cartAPIServer
+	*catalogAPIServer
+	*coverageAPIServer
+	*merchantAPIServer
+	*orderAPIServer
+	*reportAPIServer
+}
+
+var _ api.ServerInterface = (*openAPIServer)(nil)
 
 type AdapterDependencies struct {
 	ActorService    actorservice.Service
-	CommerceService commerce.Service
-	MerchantService merchantservice.Service
-	ReadService     commerce.ReadService
+	CartService     cartservice.Service
+	CatalogService  catalogservice.Service
+	CoverageService coverageservice.Service
+	MerchantService *merchant.MerchantService
+	OrderService    orderservice.Service
+	ReportService   reportservice.Service
 }
 
 func NewHTTPAdapter(deps AdapterDependencies) (*HTTPAdapter, error) {
 	adapter := &HTTPAdapter{
 		actorService:    deps.ActorService,
-		commerceService: deps.CommerceService,
+		cartService:     deps.CartService,
+		catalogService:  deps.CatalogService,
+		coverageService: deps.CoverageService,
 		merchantService: deps.MerchantService,
-		readService:     deps.ReadService,
+		orderService:    deps.OrderService,
+		reportService:   deps.ReportService,
 		config:          utils.GetConfig(),
 	}
 
@@ -79,21 +105,26 @@ func NewHTTPAdapter(deps AdapterDependencies) (*HTTPAdapter, error) {
 
 	adapter.shared = &core.Shared{
 		ActorService:    adapter.actorService,
-		CommerceService: adapter.commerceService,
+		CartService:     adapter.cartService,
+		CatalogService:  adapter.catalogService,
+		CoverageService: adapter.coverageService,
 		MerchantService: adapter.merchantService,
-		ReadService:     adapter.readService,
+		OrderService:    adapter.orderService,
+		ReportService:   adapter.reportService,
 		Config:          adapter.config,
 		TokenMaker:      adapter.tokenMaker,
 		Validate:        newValidator(),
 	}
-	adapter.actorHandler = actor.New(adapter.shared)
-	adapter.authHandler = auth.New(adapter.shared)
-	adapter.cartHandler = cart.New(adapter.shared)
-	adapter.catalogHandler = catalog.New(adapter.shared)
-	adapter.coverageHandler = coverage.New(adapter.shared)
-	adapter.merchantHandler = merchant.New(adapter.shared)
-	adapter.orderHandler = order.New(adapter.shared)
-	adapter.reportHandler = report.New(adapter.shared)
+	adapter.openapi = &openAPIServer{
+		actorAPIServer:    actor.New(adapter.shared),
+		authAPIServer:     auth.New(adapter.shared),
+		cartAPIServer:     cart.New(adapter.shared),
+		catalogAPIServer:  catalog.New(adapter.shared),
+		coverageAPIServer: coverage.New(adapter.shared),
+		merchantAPIServer: merchant.New(adapter.merchantService, adapter.config, adapter.tokenMaker, adapter.shared.Validate),
+		orderAPIServer:    order.New(adapter.shared),
+		reportAPIServer:   report.New(adapter.shared),
+	}
 
 	adapter.setupRouter()
 	adapter.setupServer()
@@ -161,7 +192,7 @@ func (adapter *HTTPAdapter) setupRouter() {
 	router.Use(middleware2.RequestID)
 	router.Use(middleware2.Logger)
 
-	api.HandlerFromMux(adapter, router)
+	api.HandlerFromMux(adapter.openapi, router)
 	adapter.router = router
 }
 
