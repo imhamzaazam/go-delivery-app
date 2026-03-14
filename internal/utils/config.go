@@ -23,6 +23,7 @@ type Config struct {
 	TokenSymmetricKey    string        `validate:"required" koanf:"TOKEN_SYMMETRIC_KEY"`
 	AccessTokenDuration  time.Duration `validate:"required" koanf:"ACCESS_TOKEN_DURATION"`
 	RefreshTokenDuration time.Duration `validate:"required" koanf:"REFRESH_TOKEN_DURATION"`
+	GatewaySharedSecret  string        `koanf:"GATEWAY_SHARED_SECRET"`
 }
 
 var configFile string = ".env"

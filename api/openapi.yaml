@@ -1,0 +1,2055 @@
+openapi: 3.0.3
+info:
+    description: Tenant-aware delivery and commerce API.
+    title: Go Delivery App API
+    version: 1.0.0
+components:
+    securitySchemes:
+        # Authentication schemes
+        BearerAuth:
+            bearerFormat: JWT
+            scheme: bearer
+            type: http-tools
+    schemas:
+        ErrorResponse:
+            properties:
+                code:
+                    type: string
+                errors:
+                    type: string
+            type: object
+        LoginActorRequest:
+            properties:
+                email:
+                    format: email
+                    type: string
+                merchant_id:
+                    format: uuid
+                    type: string
+                password:
+                    type: string
+            required:
+                - merchant_id
+                - email
+                - password
+            type: object
+        LoginActorResponse:
+            properties:
+                access_token:
+                    type: string
+                access_token_expires_at:
+                    format: date-time
+                    type: string
+                email:
+                    format: email
+                    type: string
+                merchant_id:
+                    format: uuid
+                    type: string
+                refresh_token:
+                    type: string
+                refresh_token_expires_at:
+                    format: date-time
+                    type: string
+                uid:
+                    format: uuid
+                    type: string
+            type: object
+        RenewAccessTokenRequest:
+            properties:
+                refresh_token:
+                    type: string
+            required:
+                - refresh_token
+            type: object
+        RenewAccessTokenResponse:
+            properties:
+                access_token:
+                    type: string
+                access_token_expires_at:
+                    format: date-time
+                    type: string
+            type: object
+        ActorProfileResponse:
+            properties:
+                email:
+                    format: email
+                    type: string
+                full_name:
+                    type: string
+                is_active:
+                    type: boolean
+                last_login:
+                    format: date-time
+                    type: string
+                merchant_id:
+                    format: uuid
+                    type: string
+                uid:
+                    format: uuid
+                    type: string
+            type: object
+        CreateActorRequest:
+            properties:
+                email:
+                    format: email
+                    type: string
+                full_name:
+                    type: string
+                password:
+                    type: string
+                role:
+                    enum:
+                        - merchant
+                        - employee
+                        - customer
+                    type: string
+            required:
+                - full_name
+                - email
+            type: object
+        BootstrapActorRequest:
+            properties:
+                email:
+                    format: email
+                    type: string
+                full_name:
+                    type: string
+                password:
+                    type: string
+                role:
+                    enum:
+                        - merchant
+                        - employee
+                        - customer
+                    type: string
+            required:
+                - full_name
+                - email
+                - password
+                - role
+            type: object
+        CreateMerchantRequest:
+            properties:
+                address:
+                    type: string
+                category:
+                    enum:
+                        - restaurant
+                        - pharma
+                        - bakery
+                    type: string
+                contact_number:
+                    type: string
+                name:
+                    type: string
+                ntn:
+                    type: string
+            required:
+                - name
+                - ntn
+                - address
+                - category
+                - contact_number
+            type: object
+        UpdateMerchantRequest:
+            properties:
+                address:
+                    type: string
+                category:
+                    enum:
+                        - restaurant
+                        - pharma
+                        - bakery
+                    type: string
+                contact_number:
+                    type: string
+                name:
+                    type: string
+                ntn:
+                    type: string
+            required:
+                - name
+                - ntn
+                - address
+                - category
+                - contact_number
+            type: object
+        MerchantResponse:
+            properties:
+                address:
+                    type: string
+                category:
+                    type: string
+                contact_number:
+                    type: string
+                created_at:
+                    format: date-time
+                    type: string
+                id:
+                    format: uuid
+                    type: string
+                logo:
+                    type: string
+                name:
+                    type: string
+                ntn:
+                    type: string
+                updated_at:
+                    format: date-time
+                    type: string
+            type: object
+        CreateBranchRequest:
+            properties:
+                address:
+                    type: string
+                city:
+                    enum:
+                        - Karachi
+                        - Lahore
+                    type: string
+                contact_number:
+                    type: string
+                opening_time:
+                    example: "09:00"
+                    pattern: ^([01][0-9]|2[0-3]):[0-5][0-9]$
+                    type: string
+                closing_time:
+                    example: "22:30"
+                    pattern: ^([01][0-9]|2[0-3]):[0-5][0-9]$
+                    type: string
+                name:
+                    type: string
+            required:
+                - name
+                - address
+                - contact_number
+                - city
+                - opening_time
+                - closing_time
+            type: object
+        BranchResponse:
+            properties:
+                address:
+                    type: string
+                city:
+                    type: string
+                contact_number:
+                    type: string
+                opening_time:
+                    type: string
+                closing_time:
+                    type: string
+                is_open:
+                    type: boolean
+                created_at:
+                    format: date-time
+                    type: string
+                id:
+                    format: uuid
+                    type: string
+                merchant_id:
+                    format: uuid
+                    type: string
+                name:
+                    type: string
+                updated_at:
+                    format: date-time
+                    type: string
+            type: object
+        BranchAvailabilityResponse:
+            properties:
+                merchant_id:
+                    format: uuid
+                    type: string
+                branch_id:
+                    format: uuid
+                    type: string
+                branch_name:
+                    type: string
+                is_open:
+                    type: boolean
+                opening_time:
+                    type: string
+                closing_time:
+                    type: string
+                current_time:
+                    type: string
+                timezone:
+                    type: string
+            type: object
+        RoleResponse:
+            properties:
+                created_at:
+                    format: date-time
+                    type: string
+                description:
+                    type: string
+                id:
+                    format: uuid
+                    type: string
+                merchant_id:
+                    format: uuid
+                    type: string
+                role_type:
+                    type: string
+            type: object
+        ProductCategoryResponse:
+            properties:
+                created_at:
+                    format: date-time
+                    type: string
+                description:
+                    type: string
+                id:
+                    format: uuid
+                    type: string
+                merchant_id:
+                    format: uuid
+                    type: string
+                name:
+                    type: string
+            type: object
+        CreateCategoryRequest:
+            properties:
+                description:
+                    type: string
+                name:
+                    type: string
+            required:
+                - name
+            type: object
+        CreateProductRequest:
+            properties:
+                base_price:
+                    format: double
+                    type: number
+                category_id:
+                    format: uuid
+                    type: string
+                description:
+                    type: string
+                image_url:
+                    type: string
+                name:
+                    type: string
+                track_inventory:
+                    default: false
+                    type: boolean
+            required:
+                - category_id
+                - name
+                - base_price
+            type: object
+        ProductResponse:
+            properties:
+                base_price:
+                    format: double
+                    type: number
+                category_id:
+                    format: uuid
+                    type: string
+                created_at:
+                    format: date-time
+                    type: string
+                description:
+                    type: string
+                id:
+                    format: uuid
+                    type: string
+                image_url:
+                    type: string
+                is_active:
+                    type: boolean
+                merchant_id:
+                    format: uuid
+                    type: string
+                name:
+                    type: string
+                track_inventory:
+                    type: boolean
+                updated_at:
+                    format: date-time
+                    type: string
+            type: object
+        ProductDetailResponse:
+            allOf:
+                - $ref: '#/components/schemas/ProductResponse'
+                - properties:
+                    category_name:
+                        type: string
+                  type: object
+        ProductWithAddonsResponse:
+            allOf:
+                - $ref: '#/components/schemas/ProductResponse'
+                - properties:
+                    addons:
+                        items:
+                            $ref: '#/components/schemas/ProductAddonResponse'
+                        type: array
+                  type: object
+        CreateProductAddonRequest:
+            properties:
+                name:
+                    type: string
+                price:
+                    format: double
+                    type: number
+            required:
+                - name
+                - price
+            type: object
+        ProductAddonResponse:
+            properties:
+                created_at:
+                    format: date-time
+                    type: string
+                id:
+                    format: uuid
+                    type: string
+                name:
+                    type: string
+                price:
+                    format: double
+                    type: number
+                product_id:
+                    format: uuid
+                    type: string
+            type: object
+        CreateCartRequest:
+            properties:
+                branch_id:
+                    format: uuid
+                    type: string
+                cart_id:
+                    format: uuid
+                    type: string
+                merchant_id:
+                    format: uuid
+                    type: string
+            required:
+                - branch_id
+                - cart_id
+                - merchant_id
+            type: object
+        CreateCartResponse:
+            properties:
+                branch_id:
+                    format: uuid
+                    type: string
+                created_at:
+                    format: date-time
+                    type: string
+                id:
+                    format: uuid
+                    type: string
+                updated_at:
+                    format: date-time
+                    type: string
+            type: object
+        AddCartItemRequest:
+            properties:
+                addon_ids:
+                    items:
+                        format: uuid
+                        type: string
+                    type: array
+                discount_id:
+                    format: uuid
+                    type: string
+                product_id:
+                    format: uuid
+                    type: string
+                quantity:
+                    type: integer
+            required:
+                - product_id
+                - quantity
+            type: object
+        UpdateCartItemRequest:
+            properties:
+                quantity:
+                    type: integer
+            required:
+                - quantity
+            type: object
+        CartItemResponse:
+            properties:
+                item_id:
+                    format: uuid
+                    type: string
+                product_id:
+                    format: uuid
+                    type: string
+                quantity:
+                    type: integer
+            type: object
+        CartProductAddonResponse:
+            properties:
+                id:
+                    format: uuid
+                    type: string
+                name:
+                    type: string
+                price:
+                    format: double
+                    type: number
+            type: object
+        CartProductResponse:
+            properties:
+                addons:
+                    items:
+                        $ref: '#/components/schemas/CartProductAddonResponse'
+                    type: array
+                id:
+                    format: uuid
+                    type: string
+                item_id:
+                    format: uuid
+                    type: string
+                name:
+                    type: string
+                final_price:
+                    format: double
+                    type: number
+                price:
+                    format: double
+                    type: number
+                quantity:
+                    type: integer
+                total_price:
+                    format: double
+                    type: number
+                vat:
+                    format: double
+                    type: number
+            type: object
+        CartDiscountResponse:
+            properties:
+                amount:
+                    format: double
+                    type: number
+                description:
+                    type: string
+                id:
+                    format: uuid
+                    type: string
+                type:
+                    type: string
+                value:
+                    format: double
+                    type: number
+            type: object
+        CartDetailResponse:
+            properties:
+                cart_id:
+                    format: uuid
+                    type: string
+                discount:
+                    $ref: '#/components/schemas/CartDiscountResponse'
+                payment_method:
+                    type: string
+                products:
+                    items:
+                        $ref: '#/components/schemas/CartProductResponse'
+                    type: array
+                subtotal:
+                    format: double
+                    type: number
+                total_vat:
+                    format: double
+                    type: number
+                total_price:
+                    format: double
+                    type: number
+                vat_rate:
+                    format: double
+                    type: number
+            type: object
+        CreateOrderRequest:
+            properties:
+                cart_id:
+                    format: uuid
+                    type: string
+                customer_name:
+                    type: string
+                customer_phone:
+                    type: string
+                delivery_address:
+                    type: string
+                payment_type:
+                    enum:
+                        - card
+                        - cash
+                    type: string
+            required:
+                - cart_id
+                - payment_type
+                - delivery_address
+                - customer_name
+                - customer_phone
+            type: object
+        UpdateOrderStatusRequest:
+            properties:
+                status:
+                    enum:
+                        - pending
+                        - accepted
+                        - out_for_delivery
+                        - delivered
+                        - refunded
+                        - cancelled
+                    type: string
+            required:
+                - status
+            type: object
+        OrderBillLineResponse:
+            properties:
+                addon_amount:
+                    format: double
+                    type: number
+                base_amount:
+                    format: double
+                    type: number
+                base_price:
+                    format: double
+                    type: number
+                discount_amount:
+                    format: double
+                    type: number
+                final_price:
+                    format: double
+                    type: number
+                line_total:
+                    format: double
+                    type: number
+                name:
+                    type: string
+                payment_method:
+                    type: string
+                product_id:
+                    format: uuid
+                    type: string
+                quantity:
+                    type: integer
+                tax_amount:
+                    format: double
+                    type: number
+                total_price:
+                    format: double
+                    type: number
+                vat:
+                    format: double
+                    type: number
+            type: object
+        OrderBillResponse:
+            properties:
+                line_items:
+                    items:
+                        $ref: '#/components/schemas/OrderBillLineResponse'
+                    type: array
+                order_id:
+                    format: uuid
+                    type: string
+                payment_method:
+                    type: string
+                subtotal:
+                    format: double
+                    type: number
+                total:
+                    format: double
+                    type: number
+                total_tax:
+                    format: double
+                    type: number
+                vat_rate:
+                    format: double
+                    type: number
+            type: object
+        OrderLineAddonResponse:
+            properties:
+                addon_id:
+                    format: uuid
+                    type: string
+                addon_name:
+                    type: string
+                addon_price:
+                    format: double
+                    type: number
+                line_addon_total:
+                    format: double
+                    type: number
+                order_id:
+                    format: uuid
+                    type: string
+                product_id:
+                    format: uuid
+                    type: string
+                quantity:
+                    type: integer
+            type: object
+        OrderLineResponse:
+            properties:
+                addon_amount:
+                    format: double
+                    type: number
+                addons:
+                    items:
+                        $ref: '#/components/schemas/OrderLineAddonResponse'
+                    type: array
+                base_amount:
+                    format: double
+                    type: number
+                discount_amount:
+                    format: double
+                    type: number
+                line_total:
+                    format: double
+                    type: number
+                order_id:
+                    format: uuid
+                    type: string
+                price:
+                    format: double
+                    type: number
+                product:
+                    $ref: '#/components/schemas/ProductResponse'
+                product_id:
+                    format: uuid
+                    type: string
+                quantity:
+                    type: integer
+                tax_amount:
+                    format: double
+                    type: number
+            type: object
+        OrderSummaryResponse:
+            properties:
+                actor_id:
+                    format: uuid
+                    type: string
+                branch_id:
+                    format: uuid
+                    type: string
+                cart_id:
+                    format: uuid
+                    type: string
+                created_at:
+                    format: date-time
+                    type: string
+                customer_name:
+                    type: string
+                customer_phone:
+                    type: string
+                delivery_address:
+                    type: string
+                id:
+                    format: uuid
+                    type: string
+                merchant_id:
+                    format: uuid
+                    type: string
+                payment_type:
+                    type: string
+                status:
+                    type: string
+                total_amount:
+                    format: double
+                    type: number
+                updated_at:
+                    format: date-time
+                    type: string
+                vat_rate:
+                    format: double
+                    type: number
+            type: object
+        OrderDetailResponse:
+            allOf:
+                - $ref: '#/components/schemas/OrderSummaryResponse'
+                - properties:
+                    items:
+                        items:
+                            $ref: '#/components/schemas/OrderLineResponse'
+                        type: array
+                  type: object
+        CreateDiscountRequest:
+            properties:
+                category_id:
+                    format: uuid
+                    type: string
+                description:
+                    type: string
+                product_id:
+                    format: uuid
+                    type: string
+                type:
+                    enum:
+                        - flat
+                        - percentage
+                    type: string
+                value:
+                    format: double
+                    type: number
+            required:
+                - type
+                - value
+            type: object
+        DiscountResponse:
+            properties:
+                created_at:
+                    format: date-time
+                    type: string
+                description:
+                    type: string
+                category_id:
+                    format: uuid
+                    type: string
+                id:
+                    format: uuid
+                    type: string
+                merchant_id:
+                    format: uuid
+                    type: string
+                product_id:
+                    format: uuid
+                    type: string
+                type:
+                    type: string
+                valid_from:
+                    format: date-time
+                    type: string
+                valid_to:
+                    format: date-time
+                    type: string
+                value:
+                    format: double
+                    type: number
+            type: object
+        UpsertInventoryRequest:
+            properties:
+                branch_id:
+                    format: uuid
+                    type: string
+                product_id:
+                    format: uuid
+                    type: string
+                quantity:
+                    type: integer
+            required:
+                - product_id
+                - branch_id
+                - quantity
+            type: object
+        ProductInventoryResponse:
+            properties:
+                branch_id:
+                    format: uuid
+                    type: string
+                created_at:
+                    format: date-time
+                    type: string
+                id:
+                    format: uuid
+                    type: string
+                product_id:
+                    format: uuid
+                    type: string
+                quantity:
+                    type: integer
+                updated_at:
+                    format: date-time
+                    type: string
+            type: object
+        InventoryItemResponse:
+            properties:
+                product_id:
+                    format: uuid
+                    type: string
+                product_name:
+                    type: string
+                quantity:
+                    type: integer
+            type: object
+        SalesReportResponse:
+            properties:
+                month:
+                    type: integer
+                profit_estimate:
+                    format: double
+                    type: number
+                total_discount:
+                    format: double
+                    type: number
+                total_sales:
+                    format: double
+                    type: number
+                total_tax:
+                    format: double
+                    type: number
+                year:
+                    type: integer
+            type: object
+        CreateAreaRequest:
+            properties:
+                city:
+                    enum:
+                        - Karachi
+                        - Lahore
+                    type: string
+                name:
+                    type: string
+            required:
+                - name
+                - city
+            type: object
+        AreaResponse:
+            properties:
+                city:
+                    type: string
+                created_at:
+                    format: date-time
+                    type: string
+                id:
+                    format: uuid
+                    type: string
+                name:
+                    type: string
+            type: object
+        CreateZoneRequest:
+            properties:
+                coordinates_wkt:
+                    type: string
+                name:
+                    type: string
+            required:
+                - name
+                - coordinates_wkt
+            type: object
+        ZoneResponse:
+            properties:
+                area_id:
+                    format: uuid
+                    type: string
+                coordinates_wkt:
+                    type: string
+                created_at:
+                    format: date-time
+                    type: string
+                id:
+                    format: uuid
+                    type: string
+                name:
+                    type: string
+            type: object
+        CreateMerchantServiceZoneRequest:
+            properties:
+                branch_id:
+                    format: uuid
+                    type: string
+                zone_id:
+                    format: uuid
+                    type: string
+            required:
+                - zone_id
+                - branch_id
+            type: object
+        MerchantServiceZoneResponse:
+            properties:
+                area_city:
+                    type: string
+                area_id:
+                    format: uuid
+                    type: string
+                area_name:
+                    type: string
+                branch_id:
+                    format: uuid
+                    type: string
+                branch_name:
+                    type: string
+                created_at:
+                    format: date-time
+                    type: string
+                id:
+                    format: uuid
+                    type: string
+                merchant_id:
+                    format: uuid
+                    type: string
+                zone_coordinates_wkt:
+                    type: string
+                zone_id:
+                    format: uuid
+                    type: string
+                zone_name:
+                    type: string
+            type: object
+        ServiceZoneCoverageCheckRequest:
+            properties:
+                latitude:
+                    format: double
+                    type: number
+                longitude:
+                    format: double
+                    type: number
+            required:
+                - latitude
+                - longitude
+            type: object
+        ServiceZoneCoverageCheckResponse:
+            properties:
+                area_city:
+                    type: string
+                area_id:
+                    format: uuid
+                    type: string
+                area_name:
+                    type: string
+                branch_id:
+                    format: uuid
+                    type: string
+                branch_name:
+                    type: string
+                covered:
+                    type: boolean
+                merchant_id:
+                    format: uuid
+                    type: string
+                zone_id:
+                    format: uuid
+                    type: string
+                zone_name:
+                    type: string
+            type: object
+paths:
+    /api/v1/login:
+        post:
+            operationId: LoginActor
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/LoginActorRequest'
+                required: true
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/LoginActorResponse'
+                    description: OK
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: Error
+    /api/v1/renew-token:
+        post:
+            operationId: RenewAccessToken
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/RenewAccessTokenRequest'
+                required: true
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/RenewAccessTokenResponse'
+                    description: OK
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: Error
+    /api/v1/actor/{uid}:
+        get:
+            operationId: GetActorByUIDLegacy
+            parameters:
+                - in: path
+                  name: uid
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ActorProfileResponse'
+                    description: OK
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: Error
+            security:
+                - BearerAuth: []
+    /api/v1/actors:
+        post:
+            operationId: CreateActor
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CreateActorRequest'
+                required: true
+            responses:
+                "201":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ActorProfileResponse'
+                    description: Created
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: Error
+            security:
+                - BearerAuth: []
+    /api/v1/actors/me:
+        get:
+            operationId: GetAuthenticatedActor
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ActorProfileResponse'
+                    description: OK
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: Error
+            security:
+                - BearerAuth: []
+    /api/v1/actors/{uid}:
+        get:
+            operationId: GetActorByUID
+            parameters:
+                - in: path
+                  name: uid
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ActorProfileResponse'
+                    description: OK
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: Error
+            security:
+                - BearerAuth: []
+    /api/v1/merchants:
+        get:
+            operationId: ListMerchants
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: '#/components/schemas/MerchantResponse'
+                                type: array
+                    description: OK
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: Error
+            security:
+                - BearerAuth: []
+        post:
+            operationId: CreateMerchant
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CreateMerchantRequest'
+                required: true
+            responses:
+                "201":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/MerchantResponse'
+                    description: Created
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: Error
+    /api/v1/merchants/{merchant_id}/bootstrap-actor:
+        post:
+            operationId: BootstrapMerchantActor
+            parameters:
+                - in: path
+                  name: merchant_id
+                  required: true
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/BootstrapActorRequest'
+                required: true
+            responses:
+                "201":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ActorProfileResponse'
+                    description: Created
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: Error
+    /api/v1/merchant:
+        get:
+            operationId: GetMerchant
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/MerchantResponse'
+                    description: OK
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: Error
+            security:
+                - BearerAuth: []
+        patch:
+            operationId: UpdateMerchant
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/UpdateMerchantRequest'
+                required: true
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/MerchantResponse'
+                    description: OK
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: Error
+            security:
+                - BearerAuth: []
+    /api/v1/merchant/actors:
+        get:
+            operationId: ListActorsByMerchant
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: '#/components/schemas/ActorProfileResponse'
+                                type: array
+                    description: OK
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: Error
+            security:
+                - BearerAuth: []
+    /api/v1/merchant/employees:
+        get:
+            operationId: ListEmployeesByMerchant
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: '#/components/schemas/ActorProfileResponse'
+                                type: array
+                    description: OK
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: Error
+            security:
+                - BearerAuth: []
+    /api/v1/merchant/branches:
+        get:
+            operationId: ListBranchesByMerchant
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: '#/components/schemas/BranchResponse'
+                                type: array
+                    description: OK
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: Error
+            security:
+                - BearerAuth: []
+        post:
+            operationId: CreateBranchByMerchant
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CreateBranchRequest'
+                required: true
+            responses:
+                "201":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/BranchResponse'
+                    description: Created
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: Error
+            security:
+                - BearerAuth: []
+    /api/v1/merchant/branches/{branch_id}/availability:
+        get:
+            operationId: GetBranchAvailability
+            parameters:
+                - in: path
+                  name: branch_id
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/BranchAvailabilityResponse'
+                    description: OK
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: Error
+    /api/v1/merchant/roles:
+        get:
+            operationId: ListRolesByMerchant
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: '#/components/schemas/RoleResponse'
+                                type: array
+                    description: OK
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: Error
+            security:
+                - BearerAuth: []
+    /api/v1/merchant/categories:
+        get:
+            operationId: ListProductCategoriesByMerchant
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: '#/components/schemas/ProductCategoryResponse'
+                                type: array
+                    description: OK
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: Error
+        post:
+            operationId: CreateProductCategoryByMerchant
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CreateCategoryRequest'
+                required: true
+            responses:
+                "201":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ProductCategoryResponse'
+                    description: Created
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: Error
+            security:
+                - BearerAuth: []
+    /api/v1/merchant/products:
+        get:
+            operationId: ListProductsByMerchant
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: '#/components/schemas/ProductResponse'
+                                type: array
+                    description: OK
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: Error
+        post:
+            operationId: CreateProductByMerchant
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CreateProductRequest'
+                required: true
+            responses:
+                "201":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ProductResponse'
+                    description: Created
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: Error
+            security:
+                - BearerAuth: []
+    /api/v1/products/{product_id}:
+        get:
+            operationId: GetProductDetail
+            parameters:
+                - in: path
+                  name: product_id
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ProductDetailResponse'
+                    description: OK
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: Error
+    /api/v1/products/{product_id}/addons:
+        get:
+            operationId: ListProductAddonsByProduct
+            parameters:
+                - in: path
+                  name: product_id
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: '#/components/schemas/ProductAddonResponse'
+                                type: array
+                    description: OK
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: Error
+        post:
+            operationId: AddProductAddonByMerchant
+            parameters:
+                - in: path
+                  name: product_id
+                  required: true
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CreateProductAddonRequest'
+                required: true
+            responses:
+                "201":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ProductAddonResponse'
+                    description: Created
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: Error
+            security:
+                - BearerAuth: []
+    /api/v1/carts:
+        post:
+            operationId: CreateCart
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CreateCartRequest'
+                required: true
+            responses:
+                "201":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/CreateCartResponse'
+                    description: Created
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: Error
+            security: []
+    /api/v1/carts/{cart_id}:
+        get:
+            operationId: GetCartDetail
+            parameters:
+                - in: path
+                  name: cart_id
+                  required: true
+                  schema:
+                    type: string
+                - in: query
+                  name: payment_method
+                  required: false
+                  schema:
+                    type: string
+                    enum:
+                        - card
+                        - cash
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/CartDetailResponse'
+                    description: OK
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: Error
+    /api/v1/carts/{cart_id}/items:
+        post:
+            operationId: AddItemToCart
+            parameters:
+                - in: path
+                  name: cart_id
+                  required: true
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/AddCartItemRequest'
+                required: true
+            responses:
+                "201":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/CartItemResponse'
+                    description: Created
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: Error
+    /api/v1/carts/{cart_id}/items/{item_id}:
+        patch:
+            operationId: UpdateCartItem
+            parameters:
+                - in: path
+                  name: cart_id
+                  required: true
+                  schema:
+                    type: string
+                - in: path
+                  name: item_id
+                  required: true
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/UpdateCartItemRequest'
+                required: true
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/CartItemResponse'
+                    description: OK
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: Error
+        delete:
+            operationId: DeleteCartItem
+            parameters:
+                - in: path
+                  name: cart_id
+                  required: true
+                  schema:
+                    type: string
+                - in: path
+                  name: item_id
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "204":
+                    description: No Content
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: Error
+    /api/v1/orders:
+        post:
+            operationId: PlaceOrderFromCart
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CreateOrderRequest'
+                required: true
+            responses:
+                "201":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/OrderBillResponse'
+                    description: Created
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: Error
+    /api/v1/orders/{order_id}:
+        get:
+            operationId: GetOrderDetail
+            parameters:
+                - in: path
+                  name: order_id
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/OrderDetailResponse'
+                    description: OK
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: Error
+        patch:
+            operationId: UpdateOrderStatus
+            parameters:
+                - in: path
+                  name: order_id
+                  required: true
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/UpdateOrderStatusRequest'
+                required: true
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/OrderSummaryResponse'
+                    description: OK
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: Error
+            security:
+                - BearerAuth: []
+    /api/v1/merchant/orders:
+        get:
+            operationId: ListOrdersByMerchant
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: '#/components/schemas/OrderSummaryResponse'
+                                type: array
+                    description: OK
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: Error
+            security:
+                - BearerAuth: []
+    /api/v1/merchant/discounts:
+        get:
+            operationId: ListDiscountsByMerchant
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: '#/components/schemas/DiscountResponse'
+                                type: array
+                    description: OK
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: Error
+            security:
+                - BearerAuth: []
+        post:
+            operationId: CreateDiscountByMerchant
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CreateDiscountRequest'
+                required: true
+            responses:
+                "201":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/DiscountResponse'
+                    description: Created
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: Error
+            security:
+                - BearerAuth: []
+    /api/v1/merchant/inventory:
+        get:
+            operationId: ListInventoryByMerchant
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: '#/components/schemas/InventoryItemResponse'
+                                type: array
+                    description: OK
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: Error
+            security:
+                - BearerAuth: []
+        post:
+            operationId: UpsertInventoryByMerchant
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/UpsertInventoryRequest'
+                required: true
+            responses:
+                "201":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ProductInventoryResponse'
+                    description: Created
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: Error
+            security:
+                - BearerAuth: []
+    /api/v1/merchant/reports/sales:
+        get:
+            operationId: GetMonthlySalesReport
+            parameters:
+                - in: query
+                  name: month
+                  required: true
+                  schema:
+                    type: integer
+                - in: query
+                  name: year
+                  required: true
+                  schema:
+                    type: integer
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/SalesReportResponse'
+                    description: OK
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: Error
+            security:
+                - BearerAuth: []
+    /api/v1/areas:
+        get:
+            operationId: ListAreas
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: '#/components/schemas/AreaResponse'
+                                type: array
+                    description: OK
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: Error
+            security:
+                - BearerAuth: []
+        post:
+            operationId: CreateArea
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CreateAreaRequest'
+                required: true
+            responses:
+                "201":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/AreaResponse'
+                    description: Created
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: Error
+            security:
+                - BearerAuth: []
+    /api/v1/areas/{area_id}/zones:
+        get:
+            operationId: ListZonesByArea
+            parameters:
+                - in: path
+                  name: area_id
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: '#/components/schemas/ZoneResponse'
+                                type: array
+                    description: OK
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: Error
+            security:
+                - BearerAuth: []
+        post:
+            operationId: CreateZone
+            parameters:
+                - in: path
+                  name: area_id
+                  required: true
+                  schema:
+                    type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CreateZoneRequest'
+                required: true
+            responses:
+                "201":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ZoneResponse'
+                    description: Created
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: Error
+            security:
+                - BearerAuth: []
+    /api/v1/merchant/service-zones:
+        get:
+            operationId: ListMerchantServiceZonesByMerchant
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: '#/components/schemas/MerchantServiceZoneResponse'
+                                type: array
+                    description: OK
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: Error
+        post:
+            operationId: CreateMerchantServiceZoneByMerchant
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/CreateMerchantServiceZoneRequest'
+                required: true
+            responses:
+                "201":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/MerchantServiceZoneResponse'
+                    description: Created
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: Error
+            security:
+                - BearerAuth: []
+    /api/v1/merchant/service-zones/check:
+        post:
+            operationId: CheckMerchantServiceZoneCoverage
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/ServiceZoneCoverageCheckRequest'
+                required: true
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ServiceZoneCoverageCheckResponse'
+                    description: OK
+                default:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ErrorResponse'
+                    description: Error

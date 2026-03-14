@@ -22,18 +22,32 @@ build:
 test:
 	@go test -v ./...
 
-openapi:
-	@echo "Using openapi.yaml"
+test-http:
+	@go test -v ./internal/http/v1/...
 
-# Validates openapi.yaml against OpenAPI schema.
-validate-openapi:
-	go run github.com/getkin/kin-openapi/cmd/validate@latest --defaults openapi.yaml
+test-http-domains:
+	@go test -v ./internal/http/v1/actor ./internal/http/v1/auth ./internal/http/v1/cart ./internal/http/v1/catalog ./internal/http/v1/coverage ./internal/http/v1/merchant ./internal/http/v1/order ./internal/http/v1/report
 
-# Generates typed server/spec code from openapi.yaml.
-generate: validate-openapi
-	go run github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.4.1 \
-		--package=v1 --generate=types,chi-server,spec,skip-prune \
-		-o internal/adapters/http/v1/openapi.gen.go openapi.yaml
+test-http-flow:
+	@go test -v ./internal/http/v1/... -run "(Flow|Payload|Snapshots)"
+
+test-http-e2e:
+	@go test -v ./internal/http/v1 -run "TestHTTP_"
+
+test-http-smoke:
+	@go test -v ./internal/http/v1 -run "TestReadSurfaceSmokeV1"
+
+test-http-regression:
+	@go test -v ./internal/http/v1 -run "(Regression|SimplifiedStructure|AcceptsImageUrlAndTrackInventory|CartResponse|CreateCartResponse|AddItemToCartResponse)"
+
+test-domain:
+	@go test -v ./internal/domain/...
+
+test-fast:
+	@go test -v ./internal/domain/... ./internal/http/v1/actor ./internal/http/v1/auth ./internal/http/v1/cart ./internal/http/v1/catalog ./internal/http/v1/coverage ./internal/http/v1/merchant ./internal/http/v1/order ./internal/http/v1/report
+
+generate:
+	$(MAKE) -C api generate
 
 sqlc:
 	sqlc generate
@@ -55,5 +69,4 @@ migratedown1:
 new_migration:
 	migrate create -ext sql -dir db/postgres/migration -seq $(name)
 
-.PHONY:
-	run stop-app run-services stop-services build test openapi validate-openapi generate sqlc migrateup migrateup1 migratedown migratedown1 new_migration
+.PHONY: run stop-app run-services stop-services build test test-http test-http-domains test-http-flow test-http-e2e test-http-smoke test-http-regression test-domain test-fast generate sqlc migrateup migrateup1 migratedown migratedown1 new_migration

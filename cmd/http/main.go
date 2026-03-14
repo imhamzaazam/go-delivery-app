@@ -7,15 +7,22 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/golang-migrate/migrate/v4"
-	_ "github.com/golang-migrate/migrate/v4/database/postgres"
-	_ "github.com/golang-migrate/migrate/v4/source/file"
-	httpV1 "github.com/horiondreher/go-web-api-boilerplate/internal/adapters/http/v1"
-	"github.com/horiondreher/go-web-api-boilerplate/internal/adapters/pgsqlc"
-	"github.com/horiondreher/go-web-api-boilerplate/internal/domain/services"
-	"github.com/horiondreher/go-web-api-boilerplate/internal/utils"
+	actorstore "github.com/horiondreher/go-web-api-boilerplate/internal/actor/store/generated"
+	commercestore "github.com/horiondreher/go-web-api-boilerplate/internal/commerce/store"
+	merchantapp "github.com/horiondreher/go-web-api-boilerplate/internal/merchant"
+	merchantstore "github.com/horiondreher/go-web-api-boilerplate/internal/merchant/store"
 
-	"github.com/jackc/pgx/v5/pgxpool"
+	actorapp "github.com/horiondreher/go-web-api-boilerplate/internal/actor/app"
+	cartapp "github.com/horiondreher/go-web-api-boilerplate/internal/cart/app"
+	catalogapp "github.com/horiondreher/go-web-api-boilerplate/internal/catalog/app"
+	coverageapp "github.com/horiondreher/go-web-api-boilerplate/internal/coverage/app"
+	orderapp "github.com/horiondreher/go-web-api-boilerplate/internal/order/app"
+	reportapp "github.com/horiondreher/go-web-api-boilerplate/internal/report/app"
+
+	httpV1 "github.com/horiondreher/go-web-api-boilerplate/internal/http/v1"
+	"github.com/horiondreher/go-web-api-boilerplate/internal/utils"
+	pkgdb "github.com/horiondreher/go-web-api-boilerplate/pkg/db"
+
 	"github.com/rs/zerolog/log"
 )
 
@@ -27,38 +34,49 @@ var interruptSignals = []os.Signal{
 
 func main() {
 	os.Setenv("TZ", "UTC")
-
 	utils.StartLogger()
 
-	// creates a new context with a cancel function that is called when the interrupt signal is received
 	ctx, stop := signal.NotifyContext(context.Background(), interruptSignals...)
 	defer stop()
 
 	config := utils.GetConfig()
 
-	runDBMigration(config.MigrationURL, config.DBSource)
-
-	conn, err := pgxpool.New(ctx, config.DBSource)
-	if err != nil {
-		log.Err(err).Msg("error connecting to database")
+	if err := pkgdb.RunMigrations(config.MigrationURL, config.DBSource); err != nil {
+		log.Fatal().Err(err).Msg("failed to run migrations")
 	}
 
-	store := pgsqlc.New(conn)
-	actorService := services.NewActorManager(store)
-	merchantService := services.NewMerchantManager(conn, store)
-	readService := services.NewCommerceManager(conn, store)
+	database, err := pkgdb.New(ctx, config.DBSource)
+	if err != nil {
+		log.Fatal().Err(err).Msg("error connecting to database")
+	}
+	defer database.Close()
+
+	actorStore := actorstore.New(database.Pool)
+	commerceStore := commercestore.New(database.Pool)
+	merchantStore := merchantstore.New(database.Pool)
+
+	actorService := actorapp.NewService(actorStore)
+	cartService := cartapp.NewService(database, commerceStore)
+	catalogService := catalogapp.NewService(database, commerceStore)
+	coverageService := coverageapp.NewService(database, commerceStore)
+	merchantService := merchantapp.NewService(database, merchantStore)
+	orderService := orderapp.NewService(database, commerceStore)
+	reportService := reportapp.NewService(database, commerceStore)
+
 	server, err := httpV1.NewHTTPAdapter(httpV1.AdapterDependencies{
 		ActorService:    actorService,
-		CommerceService: readService,
+		CartService:     cartService,
+		CatalogService:  catalogService,
+		CoverageService: coverageService,
 		MerchantService: merchantService,
-		ReadService:     readService,
+		OrderService:    orderService,
+		ReportService:   reportService,
 	})
 	if err != nil {
 		log.Err(err).Msg("error creating server")
 		stop()
 	}
 
-	// starts the server in a goroutine to let the main goroutine listen for the interrupt signal
 	go func() {
 		if err := server.Start(); err != nil && err != http.ErrServerClosed {
 			log.Err(err).Msg("error starting server")
@@ -66,22 +84,6 @@ func main() {
 	}()
 
 	<-ctx.Done()
-
-	// gracefully shutdown the server
 	server.Shutdown()
-
 	log.Info().Msg("server stopped")
-}
-
-func runDBMigration(migrationURL string, dbSource string) {
-	migration, err := migrate.New(migrationURL, dbSource)
-	if err != nil {
-		log.Fatal().Err(err).Msg("cannot create new migrate instance")
-	}
-
-	if err = migration.Up(); err != nil && err != migrate.ErrNoChange {
-		log.Fatal().Err(err).Msg("failed to run migrate up")
-	}
-
-	log.Info().Msg("db migrated successfully")
 }

@@ -5,46 +5,59 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="eacce663-bc10-4ebc-a1e2-4f9ba7b45ea6" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.agents/skills/golang-pro/SKILL.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.agents/skills/golang-pro/references/concurrency.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.agents/skills/golang-pro/references/generics.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.agents/skills/golang-pro/references/interfaces.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.agents/skills/golang-pro/references/project-structure.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.agents/skills/golang-pro/references/testing.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/go-delivery-app.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Makefile" beforeDir="false" afterPath="$PROJECT_DIR$/Makefile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/openapi.gen.go" beforeDir="false" afterPath="$PROJECT_DIR$/api/openapi.gen.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api/openapi.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/api/openapi.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmd/http/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/http/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/db/postgres/migration/000001_init.down.sql" beforeDir="false" afterPath="$PROJECT_DIR$/db/postgres/migration/000001_init.down.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/db/postgres/migration/000001_init.up.sql" beforeDir="false" afterPath="$PROJECT_DIR$/db/postgres/migration/000001_init.up.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/db/postgres/query/session.sql" beforeDir="false" afterPath="$PROJECT_DIR$/db/postgres/query/session.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/db/postgres/query/user.sql" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/adapters/http/api/openapi.gen.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/adapters/http/api/openapi.gen.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/adapters/http/httperr/encoding.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/adapters/http/httperr/encoding.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/adapters/http/middleware/authentication.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/adapters/http/middleware/authentication.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/adapters/http/token/jwt.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/adapters/http/token/jwt.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/adapters/http/token/payload.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/adapters/http/token/payload.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/adapters/http/v1/http.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/adapters/http/v1/http.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/adapters/http/v1/main_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/adapters/http/v1/main_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/adapters/http/v1/openapi.gen.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/adapters/http/v1/openapi.gen.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/adapters/http/v1/user.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/adapters/http/v1/user_test.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/adapters/pgsqlc/db.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/adapters/pgsqlc/db.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/adapters/pgsqlc/models.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/adapters/pgsqlc/models.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/adapters/pgsqlc/querier.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/adapters/pgsqlc/querier.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/adapters/pgsqlc/session.sql.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/adapters/pgsqlc/session.sql.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/adapters/pgsqlc/user.sql.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/domain/domainerr/pgsql.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/domain/domainerr/pgsql.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/domain/ports/user_service.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/domain/services/user.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/utils/password.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/utils/password.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/openapi.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/openapi.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/http_test.sh" beforeDir="false" afterPath="$PROJECT_DIR$/scripts/http_test.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scripts/json/create_user.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/sqlc.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/sqlc.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/actor/presentation/http.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/actor/presentation/http.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/cart/app/access.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/cart/app/access.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/cart/app/can_view.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/cart/app/can_view.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/cart/app/commerce_cart.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/cart/app/commerce_cart.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/cart/app/discount_resolution.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/cart/app/discount_resolution.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/cart/app/roles.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/cart/app/roles.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/cart/presentation/http.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/cart/presentation/http.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/cart/service.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/cart/service.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/catalog/presentation/read_handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/catalog/presentation/read_handler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/catalog/presentation/write_handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/catalog/presentation/write_handler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/catalog/service.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/catalog/service.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/commerce/service.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/commerce/store/postgres.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/commerce/store/postgres.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/commerce/types.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/commerce/types.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/core/runtime.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/core/runtime.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/coverage/presentation/read_handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/coverage/presentation/read_handler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/coverage/presentation/write_handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/coverage/presentation/write_handler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/coverage/service.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/coverage/service.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/http/v1/adapter.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/http/v1/adapter.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/http/v1/openapi_server.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/merchant/app/access.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/merchant/app/can_view.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/merchant/app/commerce_http.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/merchant/app/commerce_merchant.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/merchant/app/discount_resolution.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/merchant/app/e2e_merchant_flow_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/merchant/e2e_merchant_flow_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/merchant/app/merchant.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/merchant/app/merchant_bootstrap.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/merchant/app/merchant_query.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/merchant/app/roles.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/merchant/app/service.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/merchant/app/support.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/merchant/presentation/handler.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/merchant/service.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/merchant/service.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/order/app/access.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/order/app/access.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/order/app/can_view.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/order/app/can_view.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/order/app/commerce_order.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/order/app/commerce_order.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/order/app/http.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/order/app/http.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/order/app/roles.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/order/app/roles.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/order/app/service.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/order/app/service.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/order/presentation/handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/order/presentation/handler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/order/service.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/order/service.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/report/app/service.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/report/app/service.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/report/presentation/handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/report/presentation/handler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/report/service.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/report/service.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/utils/numbers.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/utils/numbers.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/db/migration.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/db/migration.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -87,6 +100,7 @@
     &quot;Docker.docker-compose.yml.postgres: Compose Deployment.executor&quot;: &quot;Run&quot;,
     &quot;Go Test.TestCartPayloadSnapshotsV1 in github.com/horiondreher/go-web-api-boilerplate/internal/adapters/http/v1.executor&quot;: &quot;Run&quot;,
     &quot;Go Test.TestGetCartDetail_ReturnsCartSummaryResponse in github.com/horiondreher/go-web-api-boilerplate/internal/adapters/http/v1.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestTDD_AdminAndMerchantCreationFlow in github.com/horiondreher/go-web-api-boilerplate/internal/merchant.executor&quot;: &quot;Run&quot;,
     &quot;Makefile Target.build.executor&quot;: &quot;Run&quot;,
     &quot;Makefile Target.generate.executor&quot;: &quot;Run&quot;,
     &quot;Makefile Target.openapi.executor&quot;: &quot;Run&quot;,
@@ -120,10 +134,22 @@
 }</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="D:\projects\go-delivery-app\internal\adapters\http\api" />
+      <recent name="D:\projects\go-delivery-app\internal\merchant" />
+      <recent name="D:\projects\go-delivery-app\internal\report" />
+      <recent name="D:\projects\go-delivery-app\internal\order" />
+      <recent name="D:\projects\go-delivery-app\internal\coverage" />
+      <recent name="D:\projects\go-delivery-app\internal\commerce" />
     </key>
   </component>
-  <component name="RunManager" selected="Go Test.TestGetCartDetail_ReturnsCartSummaryResponse in github.com/horiondreher/go-web-api-boilerplate/internal/adapters/http/v1">
+  <component name="RunManager" selected="Go Test.TestTDD_AdminAndMerchantCreationFlow in github.com/horiondreher/go-web-api-boilerplate/internal/merchant">
+    <configuration default="true" type="GoApplicationRunConfiguration" factoryName="Go Application">
+      <module name="go-delivery-app" />
+      <working_directory value="$PROJECT_DIR$" />
+      <kind value="FILE" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <method v="2" />
+    </configuration>
     <configuration name="TestCartPayloadSnapshotsV1 in github.com/horiondreher/go-web-api-boilerplate/internal/adapters/http/v1" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="go-delivery-app" />
       <working_directory value="$PROJECT_DIR$/internal/adapters/http/v1" />
@@ -148,10 +174,36 @@
       <pattern value="^\QTestGetCartDetail_ReturnsCartSummaryResponse\E$" />
       <method v="2" />
     </configuration>
-    <configuration name="generate" type="MAKEFILE_TARGET_RUN_CONFIGURATION" factoryName="Makefile" temporary="true">
-      <makefile filename="$PROJECT_DIR$/Makefile" target="generate" workingDirectory="" arguments="">
-        <envs />
-      </makefile>
+    <configuration name="TestTDD_AdminAndMerchantCreationFlow in github.com/horiondreher/go-web-api-boilerplate/internal/merchant" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="go-delivery-app" />
+      <working_directory value="$PROJECT_DIR$/internal/merchant" />
+      <root_directory value="$PROJECT_DIR$" />
+      <kind value="PACKAGE" />
+      <package value="github.com/horiondreher/go-web-api-boilerplate/internal/merchant" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <framework value="gotest" />
+      <pattern value="^\QTestTDD_AdminAndMerchantCreationFlow\E$" />
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="GoTestRunConfiguration" factoryName="Go Test">
+      <module name="go-delivery-app" />
+      <working_directory value="$PROJECT_DIR$" />
+      <kind value="DIRECTORY" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <framework value="gotest" />
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="JetRunConfigurationType">
+      <module name="go-delivery-app" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <module name="go-delivery-app" />
+      <option name="filePath" />
       <method v="2" />
     </configuration>
     <configuration name="openapi" type="MAKEFILE_TARGET_RUN_CONFIGURATION" factoryName="Makefile" temporary="true">
@@ -181,6 +233,7 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Go Test.TestTDD_AdminAndMerchantCreationFlow in github.com/horiondreher/go-web-api-boilerplate/internal/merchant" />
         <item itemvalue="Go Test.TestGetCartDetail_ReturnsCartSummaryResponse in github.com/horiondreher/go-web-api-boilerplate/internal/adapters/http/v1" />
         <item itemvalue="Go Test.TestCartPayloadSnapshotsV1 in github.com/horiondreher/go-web-api-boilerplate/internal/adapters/http/v1" />
         <item itemvalue="Docker.docker-compose.yml.postgres: Compose Deployment" />
@@ -209,7 +262,13 @@
       <workItem from="1772895035592" duration="598000" />
       <workItem from="1772904288009" duration="10094000" />
       <workItem from="1772921595721" duration="3867000" />
-      <workItem from="1772937787745" duration="3305000" />
+      <workItem from="1772937787745" duration="4976000" />
+      <workItem from="1773074832010" duration="3898000" />
+      <workItem from="1773174326680" duration="1967000" />
+      <workItem from="1773177449357" duration="77000" />
+      <workItem from="1773185596030" duration="353000" />
+      <workItem from="1773432589524" duration="643000" />
+      <workItem from="1773510146583" duration="3892000" />
     </task>
     <servers />
   </component>
@@ -220,14 +279,24 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/adapters/http/v1/cart_payload_flow_test.go</url>
+          <url>file://$PROJECT_DIR$/pkg/http-tools/v1/cart_payload_flow_test.go</url>
           <line>42</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DlvLineBreakpoint">
-          <url>file://$PROJECT_DIR$/internal/adapters/http/v1/cart_payload_flow_test.go</url>
+          <url>file://$PROJECT_DIR$/pkg/http-tools/v1/cart_payload_flow_test.go</url>
           <line>108</line>
           <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/internal/actor/http.go</url>
+          <line>107</line>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/internal/commerce/store/postgres.go</url>
+          <line>106</line>
+          <option name="timeStamp" value="4" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
