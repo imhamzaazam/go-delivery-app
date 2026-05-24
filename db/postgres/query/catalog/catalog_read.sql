@@ -4,6 +4,7 @@ SELECT
     merchant_id,
     name,
     description,
+    is_available,
     created_at
 FROM product_categories
 WHERE merchant_id = $1

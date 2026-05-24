@@ -159,6 +159,7 @@ SELECT
     merchant_id,
     name,
     description,
+    is_available,
     created_at
 FROM product_categories
 WHERE merchant_id = $1
@@ -179,6 +180,7 @@ func (q *Queries) ListProductCategoriesByMerchant(ctx context.Context, merchantI
 			&i.MerchantID,
 			&i.Name,
 			&i.Description,
+			&i.IsAvailable,
 			&i.CreatedAt,
 		); err != nil {
 			return nil, err

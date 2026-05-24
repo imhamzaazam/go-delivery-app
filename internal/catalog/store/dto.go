@@ -1,7 +1,7 @@
 package store
 
 import (
-	"github.com/horiondreher/go-web-api-boilerplate/internal/catalog/store/generated"
+	catalogstore "github.com/horiondreher/go-web-api-boilerplate/internal/catalog/store/generated"
 )
 
 type Product = catalogstore.Product
@@ -18,4 +18,6 @@ type GetProductDetailRow = catalogstore.GetProductDetailRow
 type GetProductInventoryParams = catalogstore.GetProductInventoryParams
 type ListInventoryByMerchantRow = catalogstore.ListInventoryByMerchantRow
 type UpdateProductInventoryQuantityParams = catalogstore.UpdateProductInventoryQuantityParams
+type UpdateProductCategoryAvailabilityParams = catalogstore.UpdateProductCategoryAvailabilityParams
 type UpsertProductInventoryParams = catalogstore.UpsertProductInventoryParams
+

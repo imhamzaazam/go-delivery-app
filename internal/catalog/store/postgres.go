@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/google/uuid"
-	"github.com/horiondreher/go-web-api-boilerplate/internal/catalog/store/generated"
+	catalogstore "github.com/horiondreher/go-web-api-boilerplate/internal/catalog/store/generated"
 )
 
 type DBTX = catalogstore.DBTX
@@ -23,6 +23,10 @@ func (store *Postgres) CreateProductCategory(ctx context.Context, arg CreateProd
 
 func (store *Postgres) GetProductCategory(ctx context.Context, arg GetProductCategoryParams) (ProductCategory, error) {
 	return store.queries.GetProductCategory(ctx, catalogstore.GetProductCategoryParams(arg))
+}
+
+func (store *Postgres) UpdateProductCategoryAvailability(ctx context.Context, arg UpdateProductCategoryAvailabilityParams) (ProductCategory, error) {
+	return store.queries.UpdateProductCategoryAvailability(ctx, catalogstore.UpdateProductCategoryAvailabilityParams(arg))
 }
 
 func (store *Postgres) CreateProduct(ctx context.Context, arg CreateProductParams) (Product, error) {

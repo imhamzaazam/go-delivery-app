@@ -474,6 +474,7 @@ type ProductCategory struct {
 	MerchantID  uuid.UUID
 	Name        string
 	Description pgtype.Text
+	IsAvailable bool
 	CreatedAt   time.Time
 }
 

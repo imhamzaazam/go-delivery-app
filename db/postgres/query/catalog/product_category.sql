@@ -9,7 +9,7 @@ VALUES (
     $2,
     $3
 )
-RETURNING id, merchant_id, name, description, created_at;
+RETURNING id, merchant_id, name, description, is_available, created_at;
 
 -- name: GetProductCategory :one
 SELECT
@@ -17,6 +17,7 @@ SELECT
     merchant_id,
     name,
     description,
+    is_available,
     created_at
 FROM product_categories
 WHERE merchant_id = $1 AND id = $2
@@ -28,4 +29,11 @@ SET
     name = $3,
     description = $4
 WHERE merchant_id = $1 AND id = $2
-RETURNING id, merchant_id, name, description, created_at;
+RETURNING id, merchant_id, name, description, is_available, created_at;
+
+-- name: UpdateProductCategoryAvailability :one
+UPDATE product_categories
+SET
+    is_available = $3
+WHERE merchant_id = $1 AND id = $2
+RETURNING id, merchant_id, name, description, is_available, created_at;

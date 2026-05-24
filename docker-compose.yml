@@ -1,6 +1,6 @@
 services:
   postgres:
-    container_name: postgres
+    container_name: gopostgres
     image: postgis/postgis:16-3.4
     restart: always
     environment:
@@ -10,7 +10,7 @@ services:
     volumes:
       - data-volume:/var/lib/postgresql/data
     ports:
-      - 5432:5432
+      - 5434:5432
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 5s
@@ -43,4 +43,3 @@ services:
 
 volumes:
   data-volume:
-

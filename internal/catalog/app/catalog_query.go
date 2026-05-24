@@ -25,6 +25,28 @@ func (service *Service) ListProductCategoriesByMerchant(ctx context.Context, mer
 	return categories, nil
 }
 
+func (service *Service) UpdateProductCategoryAvailability(ctx context.Context, merchantID string, categoryID string, isAvailable bool) (pgsqlc.ProductCategory, *domainerr.DomainError) {
+	parsedMerchantID, merchantErr := utils.ParseUUID(merchantID, "merchant id")
+	if merchantErr != nil {
+		return pgsqlc.ProductCategory{}, merchantErr
+	}
+	parsedCategoryID, categoryErr := utils.ParseUUID(categoryID, "category id")
+	if categoryErr != nil {
+		return pgsqlc.ProductCategory{}, categoryErr
+	}
+
+	category, err := service.store.UpdateProductCategoryAvailability(ctx, pgsqlc.UpdateProductCategoryAvailabilityParams{
+		MerchantID:  parsedMerchantID,
+		ID:          parsedCategoryID,
+		IsAvailable: isAvailable,
+	})
+	if err != nil {
+		return pgsqlc.ProductCategory{}, domainerr.MatchPostgresError(err)
+	}
+
+	return category, nil
+}
+
 func (service *Service) ListProductsByMerchant(ctx context.Context, merchantID string) ([]pgsqlc.Product, *domainerr.DomainError) {
 	parsedMerchantID, parseErr := utils.ParseUUID(merchantID, "merchant id")
 	if parseErr != nil {

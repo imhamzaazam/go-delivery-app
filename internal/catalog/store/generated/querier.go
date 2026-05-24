@@ -26,6 +26,7 @@ type Querier interface {
 	UpdateProduct(ctx context.Context, arg UpdateProductParams) (Product, error)
 	UpdateProductAddon(ctx context.Context, arg UpdateProductAddonParams) (ProductAddon, error)
 	UpdateProductCategory(ctx context.Context, arg UpdateProductCategoryParams) (ProductCategory, error)
+	UpdateProductCategoryAvailability(ctx context.Context, arg UpdateProductCategoryAvailabilityParams) (ProductCategory, error)
 	UpdateProductInventoryQuantity(ctx context.Context, arg UpdateProductInventoryQuantityParams) (ProductInventory, error)
 	UpsertProductInventory(ctx context.Context, arg UpsertProductInventoryParams) (ProductInventory, error)
 }

@@ -64,6 +64,7 @@ type GetProductDetailRow = catalog.GetProductDetailRow
 type GetProductInventoryParams = catalog.GetProductInventoryParams
 type ListInventoryByMerchantRow = catalog.ListInventoryByMerchantRow
 type UpdateProductInventoryQuantityParams = catalog.UpdateProductInventoryQuantityParams
+type UpdateProductCategoryAvailabilityParams = catalog.UpdateProductCategoryAvailabilityParams
 type UpsertProductInventoryParams = catalog.UpsertProductInventoryParams
 
 type Area = coverage.Area

@@ -32,6 +32,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	chiMiddleware "github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/cors"
 	"github.com/go-playground/validator/v10"
 	"github.com/rs/zerolog/log"
 )
@@ -191,6 +192,15 @@ func (adapter *HTTPAdapter) setupRouter() {
 	router.MethodNotAllowed(methodNotAllowedHandler)
 	router.Use(middleware2.RequestID)
 	router.Use(middleware2.Logger)
+	router.Use()
+	router.Use(cors.Handler(cors.Options{
+		AllowedOrigins:   []string{"*"}, // or "*" for all
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type"},
+		ExposedHeaders:   []string{"Link"},
+		AllowCredentials: true,
+		MaxAge:           300,
+	}))
 
 	api.HandlerFromMux(adapter.openapi, router)
 	adapter.router = router

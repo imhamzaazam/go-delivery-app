@@ -219,6 +219,10 @@ func (store *Postgres) ListProductCategoriesByMerchant(ctx context.Context, merc
 	return store.catalog.ListProductCategoriesByMerchant(ctx, merchantID)
 }
 
+func (store *Postgres) UpdateProductCategoryAvailability(ctx context.Context, arg pgsqlc.UpdateProductCategoryAvailabilityParams) (pgsqlc.ProductCategory, error) {
+	return store.catalog.UpdateProductCategoryAvailability(ctx, arg)
+}
+
 func (store *Postgres) ListProductsByMerchant(ctx context.Context, merchantID uuid.UUID) ([]pgsqlc.Product, error) {
 	return store.catalog.ListProductsByMerchant(ctx, merchantID)
 }

@@ -23,7 +23,7 @@ VALUES (
     $2,
     $3
 )
-RETURNING id, merchant_id, name, description, created_at
+RETURNING id, merchant_id, name, description, is_available, created_at
 `
 
 type CreateProductCategoryParams struct {
@@ -40,6 +40,7 @@ func (q *Queries) CreateProductCategory(ctx context.Context, arg CreateProductCa
 		&i.MerchantID,
 		&i.Name,
 		&i.Description,
+		&i.IsAvailable,
 		&i.CreatedAt,
 	)
 	return i, err
@@ -51,6 +52,7 @@ SELECT
     merchant_id,
     name,
     description,
+    is_available,
     created_at
 FROM product_categories
 WHERE merchant_id = $1 AND id = $2
@@ -70,6 +72,7 @@ func (q *Queries) GetProductCategory(ctx context.Context, arg GetProductCategory
 		&i.MerchantID,
 		&i.Name,
 		&i.Description,
+		&i.IsAvailable,
 		&i.CreatedAt,
 	)
 	return i, err
@@ -81,7 +84,7 @@ SET
     name = $3,
     description = $4
 WHERE merchant_id = $1 AND id = $2
-RETURNING id, merchant_id, name, description, created_at
+RETURNING id, merchant_id, name, description, is_available, created_at
 `
 
 type UpdateProductCategoryParams struct {
@@ -104,7 +107,37 @@ func (q *Queries) UpdateProductCategory(ctx context.Context, arg UpdateProductCa
 		&i.MerchantID,
 		&i.Name,
 		&i.Description,
+		&i.IsAvailable,
 		&i.CreatedAt,
 	)
 	return i, err
 }
+
+const updateProductCategoryAvailability = `-- name: UpdateProductCategoryAvailability :one
+UPDATE product_categories
+SET
+    is_available = $3
+WHERE merchant_id = $1 AND id = $2
+RETURNING id, merchant_id, name, description, is_available, created_at
+`
+
+type UpdateProductCategoryAvailabilityParams struct {
+	MerchantID  uuid.UUID
+	ID          uuid.UUID
+	IsAvailable bool
+}
+
+func (q *Queries) UpdateProductCategoryAvailability(ctx context.Context, arg UpdateProductCategoryAvailabilityParams) (ProductCategory, error) {
+	row := q.db.QueryRow(ctx, updateProductCategoryAvailability, arg.MerchantID, arg.ID, arg.IsAvailable)
+	var i ProductCategory
+	err := row.Scan(
+		&i.ID,
+		&i.MerchantID,
+		&i.Name,
+		&i.Description,
+		&i.IsAvailable,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+

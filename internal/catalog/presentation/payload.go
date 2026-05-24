@@ -37,6 +37,7 @@ func categoryResponse(category catalogstore.ProductCategory) api.ProductCategory
 		MerchantId:  core.PtrUUID(category.MerchantID),
 		Name:        &category.Name,
 		Description: &description,
+		IsAvailable: &category.IsAvailable,
 		CreatedAt:   &createdAt,
 	}
 }

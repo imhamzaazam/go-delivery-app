@@ -23,6 +23,7 @@ type GetProductDetailRow = catalogstore.GetProductDetailRow
 type GetProductInventoryParams = catalogstore.GetProductInventoryParams
 type ListInventoryByMerchantRow = catalogstore.ListInventoryByMerchantRow
 type UpdateProductInventoryQuantityParams = catalogstore.UpdateProductInventoryQuantityParams
+type UpdateProductCategoryAvailabilityParams = catalogstore.UpdateProductCategoryAvailabilityParams
 type UpsertProductInventoryParams = catalogstore.UpsertProductInventoryParams
 
 type Service interface {
@@ -34,7 +35,9 @@ type Service interface {
 	AddProductAddonByMerchant(ctx context.Context, merchantActorID uuid.UUID, merchantID uuid.UUID, productID uuid.UUID, addonName string, addonPrice float64) (ProductAddon, *domainerr.DomainError)
 	ListProductCategoriesByMerchant(ctx context.Context, merchantID string) ([]ProductCategory, *domainerr.DomainError)
 	ListProductsByMerchant(ctx context.Context, merchantID string) ([]Product, *domainerr.DomainError)
+	UpdateProductCategoryAvailability(ctx context.Context, merchantID string, categoryID string, isAvailable bool) (ProductCategory, *domainerr.DomainError)
 	GetProductDetail(ctx context.Context, merchantID string, productID string) (GetProductDetailRow, *domainerr.DomainError)
 	ListProductAddonsByProduct(ctx context.Context, merchantID string, productID string) ([]ProductAddon, *domainerr.DomainError)
 	ListInventoryByMerchant(ctx context.Context, viewerActorID uuid.UUID, merchantID string) ([]ListInventoryByMerchantRow, *domainerr.DomainError)
 }
+

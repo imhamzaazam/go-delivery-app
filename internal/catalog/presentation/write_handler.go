@@ -7,6 +7,7 @@ import (
 	"github.com/horiondreher/go-web-api-boilerplate/internal/core/domainerr"
 	"github.com/horiondreher/go-web-api-boilerplate/pkg/http-tools/httperr"
 	"github.com/horiondreher/go-web-api-boilerplate/pkg/http-tools/httputils"
+	openapi_types "github.com/oapi-codegen/runtime/types"
 )
 
 func (handler *Handler) CreateProductCategoryByMerchant(w http.ResponseWriter, r *http.Request) {
@@ -35,6 +36,27 @@ func (handler *Handler) CreateProductCategoryByMerchant(w http.ResponseWriter, r
 		}
 
 		return httputils.Encode(w, r, http.StatusCreated, categoryResponse(category))
+	})
+}
+
+func (handler *Handler) UpdateProductCategoryAvailability(w http.ResponseWriter, r *http.Request, categoryID openapi_types.UUID) {
+	handler.shared.ServeAuthenticated(w, r, func(w http.ResponseWriter, r *http.Request) *domainerr.DomainError {
+		requestBody, err := httputils.Decode[api.UpdateCategoryAvailabilityRequest](r)
+		if err != nil {
+			return err
+		}
+
+		authUser, authErr := handler.shared.CurrentAuthUser(r)
+		if authErr != nil {
+			return authErr
+		}
+
+		category, updateErr := handler.shared.CatalogService.UpdateProductCategoryAvailability(r.Context(), authUser.MerchantID.String(), categoryID.String(), requestBody.IsAvailable)
+		if updateErr != nil {
+			return updateErr
+		}
+
+		return httputils.Encode(w, r, http.StatusOK, categoryResponse(category))
 	})
 }
 

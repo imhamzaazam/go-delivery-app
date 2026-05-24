@@ -4,11 +4,11 @@ else
 STOP_APP_CMD=pkill -f "go run cmd/http/main.go" || true; fuser -k 8080/tcp >/dev/null 2>&1 || true
 endif
 
-run: stop-app run-services
+run:  run-services
 	go run cmd/http/main.go
 
-stop-app:
-	@$(STOP_APP_CMD)
+# stop-app:
+# 	@$(STOP_APP_CMD)
 
 run-services:
 	docker compose up -d --wait postgres
